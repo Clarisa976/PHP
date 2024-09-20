@@ -30,9 +30,9 @@
         <p>
             <label for="sexo">Sexo</label><br>
             <input type="radio" name="sexo" value="Hombre" id="Hombre">
-            <label for="sexo">Hombre</label><br>
+            <label for="Hombre">Hombre</label><br>
             <input type="radio" name="sexo" value="Mujer" id="Mujer">
-            <label for="sexo">Mujer</label><br>
+            <label for="Mujer">Mujer</label><br>
         </p>
         <p>
             <label for="addFoto">Incluir mi foto:</label>
@@ -48,14 +48,14 @@
         </p>
         <p>
             <label for="comentarios">Comentarios:</label>
-            <textarea name="comenarios" id="comentarios" cols="40" rows="5"></textarea>
+            <textarea name="comentarios" id="comentarios" cols="40" rows="5"></textarea>
         </p>
         <p>
             <input type="checkbox" name="suscribirse" id="suscribirse" checked>
             <label for="suscribirse">Subscribirse al boletín de Novedades</label>
         </p>
         <p>
-            <input class="button" type="submit" value="Guardar Cambios" id="btnGuardar">
+            <input name="btnEnviar" type="submit" value="Guardar Cambios" id="btnGuardar">
             <input type="reset" value="Borrar los datos introducidos" id="btnBorrar">
         </p>
 
