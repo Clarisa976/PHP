@@ -1,3 +1,4 @@
+<?php
 echo "<h1>Recogida de datos</h1>";
 //de esta forma se mostrará solamente lo que estamos pidiendo
 echo "<p><strong>Nombre: </strong>" . $_POST["nombre"] . "</p>";
@@ -19,3 +20,4 @@ if (isset($_POST["suscribirse"])) {
     echo "No";
 }
 echo "</p>";
+?>
