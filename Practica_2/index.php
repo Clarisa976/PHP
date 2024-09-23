@@ -7,15 +7,14 @@ if(isset($_POST["btnBorrar"])){
 if (isset($_POST["btnEnviar"])) {
     //comprobamos errores en el formulario
     $error_nombre = $_POST["nombre"] == "";
-    $error_apellidos = $_POST["apellidos"] == "";
-    $error_pass = $_POST["pass"] == "";
-    $error_DNI = $_POST["DNI"] == "";
+    $error_nacido = $_POST["nacido"] == "";
     $error_sexo = !isset($_POST["sexo"]);
     $error_comentarios = $_POST["comentarios"] == "";
     
     $errores_form = $error_nombre
-        || $error_apellidos || $error_pass
-        || $error_DNI || $error_sexo || $error_comentarios;
+        || $error_nacido 
+        || $error_sexo 
+        || $error_comentarios;
 }
 ?>
 <!DOCTYPE html>
@@ -24,12 +23,8 @@ if (isset($_POST["btnEnviar"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Práctica 1</title>
-    <style>
-        .error {
-            color: red;
-        }
-    </style>
+    <title>Mi primera página PHP</title>
+    
 </head>
 
 <body>

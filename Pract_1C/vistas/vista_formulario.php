@@ -76,7 +76,7 @@
     </p>
     <p>
         <input name="btnEnviar" type="submit" value="Guardar Cambios" id="btnGuardar">
-        <input type="reset" value="Borrar los datos introducidos" id="btnBorrar">
+        <input name="btnBorrar" type="submit" value="Borrar los datos introducidos" id="btnBorrar">
     </p>
 
 
