@@ -5,7 +5,7 @@
         <input type="text" name="nombre" id="nombre" value="<?php if (isset($_POST["nombre"])) echo $_POST["nombre"]; ?>" maxlength="19" placeholder="Ponga su nombre">
         <?php
         if (isset($_POST["btnEnviar"]) && $error_nombre)
-            echo "<span class='error'>*Campo vacío*</span>";
+            echo "<span class='error'>*Campo obligatorio*</span>";
         ?>
     </p>
     <p>
@@ -29,7 +29,7 @@
         <label for="Mujer">Mujer</label><br>
         <?php
         if (isset($_POST["btnEnviar"]) && $error_sexo)
-            echo "<span class='error'>*Debe seleccionar una opción*</span>";
+            echo "<span class='error'>*Campo obligatorio*</span>";
         ?>
     </p>
 
@@ -37,22 +37,17 @@
         <label for="aficiones">Aficiones:</label>
         
         <label for="deportes">Deportes</label>
-        <input type="checkbox" name="aficiones[]" id="deportes" value="deporte">
+        <input type="checkbox" name="aficiones[]" id="deportes" value="deporte" <?php if(isset($_POST["aficiones[]"])) echo "checked";?>>
         <label for="lectura">Lectura</label>
-        <input type="checkbox" name="aficiones[]" id="lectura" value="lectura">
+        <input type="checkbox" name="aficiones[]" id="lectura" value="lectura" <?php if(isset($_POST["aficiones[]"])) echo "checked";?>>
         <label for="otros">Otros</label>
-        <input type="checkbox" name="aficiones[]" id="otros" value="otros">
+        <input type="checkbox" name="aficiones[]" id="otros" value="otros" <?php if(isset($_POST["aficiones[]"])) echo "checked";?>>
     </p>
 
     <p>
         <label for="comentarios">Comentarios:</label>
-        <textarea name="comentarios" id="comentarios" cols="40" rows="5">
-         <?php if (isset($_POST["comentarios"])) echo $_POST["comentarios"]; ?>
-         </textarea>
-        <?php
-        if (isset($_POST["btnEnviar"]) && $error_comentarios)
-            echo "<span class='error'>*Campo vacío*</span>";
-        ?>
+        <textarea name="comentarios" id="comentarios" cols="40" rows="5"><?php if (isset($_POST["comentarios"])) echo $_POST["comentarios"]; ?></textarea>
+        
     </p>
 
     <p>

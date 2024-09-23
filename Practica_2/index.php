@@ -7,14 +7,9 @@ if(isset($_POST["btnBorrar"])){
 if (isset($_POST["btnEnviar"])) {
     //comprobamos errores en el formulario
     $error_nombre = $_POST["nombre"] == "";
-    $error_nacido = $_POST["nacido"] == "";
     $error_sexo = !isset($_POST["sexo"]);
-    $error_comentarios = $_POST["comentarios"] == "";
     
-    $errores_form = $error_nombre
-        || $error_nacido 
-        || $error_sexo 
-        || $error_comentarios;
+    $errores_form = $error_nombre || $error_sexo ;
 }
 ?>
 <!DOCTYPE html>
