@@ -35,11 +35,11 @@
     <p>
         <label for="sexo">Sexo</label><br>
         <!--así dejaremos marcada la opción deseada -->
-        <input type="radio" name="sexo" value="Hombre" id="Hombre" 
-            <?php if(isset($_POST["sexo"]) && $_POST["sexo"] == "Hombre") echo "checked"; ?>>
+        <input type="radio" name="sexo" value="Hombre" id="Hombre"
+            <?php if (isset($_POST["sexo"]) && $_POST["sexo"] == "Hombre") echo "checked"; ?>>
         <label for="Hombre">Hombre</label><br>
-        <input type="radio" name="sexo" value="Mujer" id="Mujer" 
-        <?php if(isset($_POST["sexo"]) && $_POST["sexo"] == "Mujer") echo "checked"; ?>>
+        <input type="radio" name="sexo" value="Mujer" id="Mujer"
+            <?php if (isset($_POST["sexo"]) && $_POST["sexo"] == "Mujer") echo "checked"; ?>>
         <label for="Mujer">Mujer</label><br>
         <?php
         if (isset($_POST["btnEnviar"]) && $error_sexo)
@@ -71,7 +71,7 @@
         ?>
     </p>
     <p>
-        <input type="checkbox" name="suscribirse" id="suscribirse" checked>
+        <input type="checkbox" name="suscribirse" id="suscribirse"  <?php if(isset($_POST["suscribirse"])) echo "checked";?> >
         <label for="suscribirse">Subscribirse al boletín de Novedades</label>
     </p>
     <p>

@@ -1,16 +1,17 @@
 <?php
-    if(isset($_POST["btnEnviar"])){
-        //comprobamos errores en el formulario
-        $error_nombre=$_POST["nombre"]=="";
-        $error_apellidos=$_POST["apellidos"]=="";
-        $error_pass=$_POST["pass"]=="";
-        $error_DNI=$_POST["DNI"]=="";
-        $error_sexo=!isset($_POST["sexo"]);
-        $error_comentarios=$_POST["comentarios"]=="";
-        $errores_form=$error_nombre
-        ||$error_apellidos || $error_pass
-        ||$error_DNI || $error_sexo || $error_comentarios;
-    }
+if (isset($_POST["btnEnviar"])) {
+    //comprobamos errores en el formulario
+    $error_nombre = $_POST["nombre"] == "";
+    $error_apellidos = $_POST["apellidos"] == "";
+    $error_pass = $_POST["pass"] == "";
+    $error_DNI = $_POST["DNI"] == "";
+    $error_sexo = !isset($_POST["sexo"]);
+    $error_comentarios = $_POST["comentarios"] == "";
+    
+    $errores_form = $error_nombre
+        || $error_apellidos || $error_pass
+        || $error_DNI || $error_sexo || $error_comentarios;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -20,7 +21,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Práctica 1</title>
     <style>
-        .error{color:red};
+        .error {
+            color: red;
+        }
     </style>
 </head>
 
@@ -31,7 +34,7 @@
     } else {
         require "vistas/vista_formulario.php";
     }
-?>
+    ?>
 </body>
 
 </html>
