@@ -37,11 +37,11 @@
         <label for="aficiones">Aficiones:</label>
         
         <label for="deportes">Deportes</label>
-        <input type="checkbox" name="aficiones[]" id="deportes" value="deporte" <?php if(isset($_POST["aficiones[]"])) echo "checked";?>>
+        <input type="checkbox" name="aficiones[]" id="deportes" value="Deportes" <?php if(isset($_POST["aficiones"])) echo "checked";?>>
         <label for="lectura">Lectura</label>
-        <input type="checkbox" name="aficiones[]" id="lectura" value="lectura" <?php if(isset($_POST["aficiones[]"])) echo "checked";?>>
+        <input type="checkbox" name="aficiones[]" id="lectura" value="Lectura" <?php if(isset($_POST["aficiones"])) echo "checked";?>>
         <label for="otros">Otros</label>
-        <input type="checkbox" name="aficiones[]" id="otros" value="otros" <?php if(isset($_POST["aficiones[]"])) echo "checked";?>>
+        <input type="checkbox" name="aficiones[]" id="otros" value="Otros" <?php if(isset($_POST["aficiones"])) echo "checked";?>>
     </p>
 
     <p>
