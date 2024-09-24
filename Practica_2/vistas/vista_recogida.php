@@ -1,5 +1,5 @@
 <?php
-echo "<h1>Recogida de datos</h1>";
+echo "<h1>Estos son los datos enviados: </h1>";
 //de esta forma se mostrará solamente lo que estamos pidiendo
 echo "<p><strong>Nombre: </strong>" . $_POST["nombre"] . "</p>";
 echo "<p><strong>Nacido en: </strong>" . $_POST["nacido"] . "</p>";
