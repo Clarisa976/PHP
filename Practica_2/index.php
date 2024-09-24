@@ -1,15 +1,24 @@
 <?php
-//así tendríamos el efecto del reset
-if(isset($_POST["btnBorrar"])){
-    header("Location:index.php");
-    exit;
-}
 if (isset($_POST["btnEnviar"])) {
     //comprobamos errores en el formulario
     $error_nombre = $_POST["nombre"] == "";
     $error_sexo = !isset($_POST["sexo"]);
     
     $errores_form = $error_nombre || $error_sexo ;
+}
+
+//función para saber si hay un elemento en un array
+function mi_in_array($elementoBuscar,$array)
+{
+    $esta=false;
+    for ($i=0; $i < count($array); $i++) 
+    { 
+        if($array[$i]==$elementoBuscar){
+            $esta=true;
+            break;
+        }
+    }
+    return $esta;
 }
 ?>
 <!DOCTYPE html>
