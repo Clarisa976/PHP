@@ -28,7 +28,7 @@
         echo "<li>" . $familia; //mostramos la familia
         echo "<ul>";
         foreach ($miembros as $tipo => $nombre) {
-            if (is_array($nombre)) {
+            if (is_array($nombre)) {//si no es un array
                 echo "<ul>";
                 foreach ($nombre as $hijo => $nombre_crio) {
                     echo "<li>$hijo: $nombre_crio</li>";
