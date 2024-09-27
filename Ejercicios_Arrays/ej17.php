@@ -10,37 +10,52 @@
 <body>
     <?php
     echo "<h1>Familias</h1>";
-    $familias["Los Simpsons"]["Padre"] = "Homer";
-    $familias["Los Simpsons"]["Madre"] = "Marge";
-    $familias["Los Simpsons"]["Hijo1"] = "Bart";
-    $familias["Los Simpsons"]["Hijo2"] = "Lisa";
-    $familias["Los Simpsons"]["Hijo3"] = "Maggie";
-
-    $familias["Los Griffin"]["Padre"] = "Peter";
-    $familias["Los Griffin"]["Madre"] = "Lois";
-    $familias["Los Griffin"]["Hijo1"] = "Chris";
-    $familias["Los Griffin"]["Hijo2"] = "Meg";
-    $familias["Los Griffin"]["Hijo3"] = "Stewie";
-
-    //muestra los valores de las dos familias en una lista no enumerada
+    $familia = [
+        "Los Simpson" => [
+            "Padre" => "Homer",
+            "Madre" => "Marge",
+            "Hijos" =>
+            [
+                "Hijo1" => "Bart",
+                "Hijo2" => "Lisa",
+                "Hijo3" => "Maggie"
+            ]
+        ],
+        "Los Griffing" => [
+            "Padre" => "Peter",
+            "Madre" => "Lois",
+            "Hijos" =>
+            [
+                "Hijo1" => "Chris",
+                "Hijo2" => "Meg",
+                "Hijo3" => "Stewie"
+            ]
+        ]
+    ];
     echo "<ul>";
-    foreach ($familias as $familia => $miembros) {
-        echo "<li>" . $familia; //mostramos la familia
-        echo "<ul>";
-        foreach ($miembros as $tipo => $nombre) {
-            if (is_array($nombre)) {//si no es un array
-                echo "<ul>";
-                foreach ($nombre as $hijo => $nombre_crio) {
-                    echo "<li>$hijo: $nombre_crio</li>";
+
+    foreach ($familia as $familia_miembros => $miembros) {
+        echo "<li>" . $familia_miembros . "<ul>";
+
+        foreach ($miembros as $parentesco => $nombre_padres) {
+
+            if (is_array($nombre_padres)) { //verificamos si es un array
+                echo "<li>" . $parentesco . ": <ul>";
+                foreach ($nombre_padres as $hijo => $nombre_hijo) {
+                    echo "<li>" . $hijo . ": " . $nombre_hijo . "</li>";
                 }
-                echo "</ul></li>";
+                echo "</ul>";
+                echo "</li>";
             } else {
-                echo "<li>$tipo: $nombre</li>";
+                //sino el resto
+                echo "<li>" . $parentesco . ": " . $nombre_padres . "</li>";
             }
         }
-        echo "</ul>
-    </li>";
+
+        echo "</ul>";
+        echo "</li>";
     }
+
     echo "</ul>";
     ?>
 </body>
