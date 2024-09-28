@@ -48,6 +48,21 @@
             ]
         ]
     ];
+
+    //haz un recorrido del array multidimensional mostrando los valores
+    //de tal manera que nos muestre en cada ciudad qué amigos tiene
+    foreach ($amigos as $ciudad => $personas_en_ciudad) {
+        echo "<p>Amigos en ".$ciudad."</p>";
+        echo "<ul>";
+            foreach ($personas_en_ciudad as $persona => $datos) {
+                echo "<li>";
+                foreach ($datos as $key => $value) {
+                    echo "<span>".$key.": ".$value.". </span>";
+                }
+                echo "</li>";
+            }
+        echo "</ul>";
+    }
     ?>
 </body>
 
