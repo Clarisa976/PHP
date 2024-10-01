@@ -1,28 +1,32 @@
 <?php
+        if(isset($_POST["comparar"]) && !$error_form){
+        $texto_introducido = strtoupper($texto);
 
-    $primera_palabra = strtoupper($primera); //quitamos mayúsculas
-    $segunda_palabra = strtoupper($segunda);
-
-    //por defecto siempre estará mal
-    $respuesta = "no riman";
-    $clase = "rojito"; //cambiamos a la clase rojito
-
-   
-    if ( $primera_palabra[$letra_primera_palabra - 1] == $segunda_palabra[$letra_segunda_palabra - 1] &&
-        $primera_palabra[$letra_primera_palabra - 2] == $segunda_palabra[$letra_segunda_palabra - 2]) {
-        $respuesta = "riman un poco";
-        $clase = "verde"; //cambiamos a la clase a verde
-    }
-    if ($primera_palabra[$letra_primera_palabra - 3] == $segunda_palabra[$letra_segunda_palabra - 3]) {
-            $respuesta = "riman";
+        $es_capicua = true;
+        for ($i = 0; $i < $longitud_texto / 2; $i++) {
+            if ($texto_introducido[$i] != $texto_introducido[$longitud_texto - $i - 1]) {
+            $es_capicua = false;
+            break;
+            }
         }
-   
 
+        $resultado = "";
+        if (todo_letras($texto) && $es_capicua) {
+            $resultado = "<p>$texto es un palíndromo</p>";
+        } else if (todo_letras($texto) && !$es_capicua) {
+            $resultado = "<p>$texto no es un palíndromo</p>";
+        } else if (todo_numeros($texto) && $es_capicua) {
+            $resultado = "<p>$texto es capicúa</p>";
+        } else {
+            $resultado = "<p>$texto no es capicúa</p>";
+        }
 
-    echo "<div class='formulario respuesta $clase' >";
-    echo "<h2 class='centro'>Ripios - Respuesta</h2>";
-    echo "<p>Las palabras <strong>$primera </strong> y <strong>$segunda </strong>$respuesta</p>";
-    echo "</div>";
+        echo "<div class='respuesta' >";
+        echo "<h2 class='centro'>Palíndromos / Capicúas - Resultados</h2>";
+        echo "<p> . $resultado .</p>";
+        echo "</div>";
+    
 
-?>
-
+       
+        }
+    ?>

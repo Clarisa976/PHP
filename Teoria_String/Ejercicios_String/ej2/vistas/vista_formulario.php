@@ -1,35 +1,19 @@
-<form action="ej1.php" method="post">
-            <div class="formulario principal">
-                <h1 class="centro">Ripios - Formulario</h1>
-                <p>
-                <h2 clase="centro">Dime dos palabras y te diré si riman o no.</h2>
-                <label for="primera">Primera palabra: </label>
-                <input type="text" name="primera" id="primera" value="<?php if (isset($_POST["primera"])) echo $primera ?>">
-                <?php
-                if (isset($_POST["comparar"]) && $error_primera) {
-                    if ($primera == "") {
-                        echo "<span class = 'error'> Campo vacío </span>";
-                    } else {
-                        echo "<span class = 'error'> Debes teclear al menos tres caracteres </span>";
-                    }
-                }
-                ?>
-                </p>
-                <p>
-                    <label for="segunda">Segunda palabra: </label>
-                    <input type="text" name="segunda" id="segunda" value="<?php if (isset($_POST["segunda"])) echo $segunda ?>">
-                    <?php
-                    if (isset($_POST["comparar"]) && $error_segunda) {
-                        if ($segunda == '') {
-                            echo "<span class = 'error'> Campo vacío </span>";
-                        } else {
-                            echo "<span class = 'error'> Debes teclear al menos tres caracteres </span>";
-                        }
-                    }
-                    ?>
-                </p>
-                <p>
-                    <input type="submit" value="Comparar" name="comparar">
-                </p>
-            </div>
-        </form>
+<form action="ej2.php" method="post" class="formulario principal">
+
+    <h1 class="centro">Palíndromos / Capicúas - Formulario</h1>
+    <p clase="centro">Dime una palabra o un número y te diré si es polindromo o un número capicúo.</p>
+    <p>
+        <label for="texto">Palabra o número: </label><input id="texto" name="texto" type="text" value="<?php if (isset($_POST["primera"])) {echo $_POST["primera"];} ?>">
+        <?php
+        if (isset($_POST["comparar"]) && $error_texto) {
+            if ($texto == "") {
+                echo "<span class='error'> Campo vacío </span>";
+            } else if ($longitud_texto < 3) {
+                echo "<span class='error'> Debes teclear al menos tres caracteres </span>";
+            } else {
+                echo "<span class='error'> Debes teclear o letras o números </span>";
+            }
+        } ?>
+    </p>
+    <button name="comparar">Comparar</button>
+</form>

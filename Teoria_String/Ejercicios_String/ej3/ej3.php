@@ -13,19 +13,13 @@ if(isset($_POST["comparar"])){
         return $todo_l;
     }
 
-    //comprobar si es solo números
-    function todo_numeros($palabra){
-        for ($i=0; $i < strlen($palabra); $i++) {
-            if(!ctype_digit($palabra[$i])){
-                return false;
-            }
-        }
-        return true;
-    }
+    
     //errores
     $texto = trim($_POST["texto"]);
-    $longitud_texto= strlen($texto);
-    $error_texto=($texto=="" || $longitud_texto<3 || (!todo_letras($texto) && !todo_numeros($texto)));
+    $texto_m = strtoupper($texto);
+    $texto_limpio = str_replace(" ", "", $texto_m);
+    $longitud_texto= strlen($texto_limpio);
+    $error_texto=($texto=="" || $longitud_texto<3 || !todo_letras($texto_limpio));
     $error_form = $error_texto;
 }
 
@@ -36,7 +30,7 @@ if(isset($_POST["comparar"])){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejercicio 2</title>
+    <title>Ejercicio 3</title>
     <style>
         body {
             background-color: beige;
