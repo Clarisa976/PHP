@@ -2,35 +2,21 @@
 //control de errores
 if (isset($_POST["comparar"])) {
     //comprobar si es solo letras
-    function todo_letras($palabra)
+    //comprobar si es solo números
+    function todo_numeros($palabra)
     {
+        $todo_num = true;
         for ($i = 0; $i < strlen($palabra); $i++) {
-            $todo_l = true;
-            if (ord($palabra[$i]) < ord("A") || ord($palabra[$i]) > ord("z")) {
-                $todo_l = false;
-                break;
+            if (!is_numeric($palabra[$i])) {
+                $todo_num = false;
             }
         }
-        return $todo_l;
-    }
-
-    function es_numero_romano_valido($texto){
-        $texto_m = strtoupper($texto);  //se transforma el texto a mayusculas
-        $validos = ['M', 'D', 'C', 'L', 'X', 'V', 'I'];  //números romanos válidos
-
-        for ($i = 0; $i < strlen($texto_m); $i++) {
-            if (!in_array($texto_m[$i], $validos)) {  //si hay algun valor no válido
-                return false;
-            }
-        }
-        return true;
+        return $todo_num;
     }
 
     //errores
     $texto = trim($_POST["texto"]);
-    $texto_m = strtoupper($texto);
-    $longitud_texto = strlen($texto_m);
-    $error_texto = ($texto_m == "" || !es_numero_romano_valido($texto_m));
+    $error_texto = ($texto == "" || !todo_numeros($texto) || $texto >= 5000 || $texto <= 0);
     $error_form = $error_texto;
 }
 
