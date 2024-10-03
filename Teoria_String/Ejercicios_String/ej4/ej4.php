@@ -1,9 +1,10 @@
 <?php
+const VALIDOS = ['M', 'D', 'C', 'L', 'X', 'V', 'I'];
+
 //control de errores
 if (isset($_POST["comparar"])) {
     //comprobar si es solo letras
-    function todo_letras($palabra)
-    {
+    function todo_letras($palabra){
         for ($i = 0; $i < strlen($palabra); $i++) {
             $todo_l = true;
             if (ord($palabra[$i]) < ord("A") || ord($palabra[$i]) > ord("z")) {
@@ -25,11 +26,56 @@ if (isset($_POST["comparar"])) {
         }
         return true;
     }
+    //versión de miguel ángel
+    function letras_correctas($texto){
+       $correcto = true;
+        for ($i = 0; $i < strlen($texto); $i++) {
+            if (!isset(VALIDOS[$texto[$i]])) {//si hay algun valor no válido
+                $correcto = false;
+                break;
+            }
+        }
+        return $correcto;
+    }
+    function orden_bueno($texto){
+        $bueno=true;
+        for ($i = 0; $i < strlen($texto); $i++) {
+            if ((VALIDOS[$texto[$i]])<(VALIDOS[$texto[$i+1]])) {//comprobamos si el valor actual es menor que el siguiente
+                $bueno=false;
+                break;
+            }
+        }
+        return $bueno;
+    }
+    function repite_bien($texto){
+        $contador["M"]=4;
+        $contador["D"]=1;
+        $contador["C"]=4;
+        $contador["L"]=1;
+        $contador["X"]=4;
+        $contador["V"]=1;
+        $contador["I"]=4;
+        $bueno=true;
+        for ($i = 0; $i < strlen($texto); $i++) {
+            $contador[$texto[$i]]--;
+            if ($contador[$texto[$i]]<0) {
+               $bueno = false;
+               break;
+            }
+        }
+        return $bueno;
+
+    }
+
+    function bien_escrito_romano($texto){
+        return letras_correctas($texto)&& orden_bueno($texto)&&repite_bien($texto);
+    }
 
     //errores
     $texto = trim($_POST["texto"]);
     $texto_m = strtoupper($texto);
     $longitud_texto = strlen($texto_m);
+    //$error_texto = ($texto_m == "" || !bien_escrito_romano($texto_m));
     $error_texto = ($texto_m == "" || !es_numero_romano_valido($texto_m));
     $error_form = $error_texto;
 }

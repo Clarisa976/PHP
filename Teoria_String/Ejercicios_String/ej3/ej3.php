@@ -1,25 +1,51 @@
 <?php
 //control de errores
-if(isset($_POST["comparar"])){
+if (isset($_POST["comparar"])) {
     //comprobar si es solo letras
-    function todo_letras($palabra){
-        for ($i=0; $i < strlen($palabra); $i++) {
-            $todo_l=true; 
-            if(ord($palabra[$i])<ord("A") || ord($palabra[$i])>ord("z")){
-                $todo_l=false;
+    function todo_letras($palabra)
+    {
+        for ($i = 0; $i < strlen($palabra); $i++) {
+            $todo_l = true;
+            if (ord($palabra[$i]) < ord("A") || ord($palabra[$i]) > ord("z")) {
+                $todo_l = false;
                 break;
             }
         }
         return $todo_l;
     }
 
-    
+    //versión de miguel ángel
+    function quitar_espacios($texto)
+    {
+        $cadena = "";
+        for ($i = 0; $i < strlen($texto); $i++) {
+            if ($texto[$i] != " ") {
+                $cadena .= $texto[$i];
+            }
+        }
+        return $cadena; //con esta función no haría falta el trim
+    }
+    function todo_letras2($texto)
+    {
+        $texto_sin_espacios = quitar_espacios($texto);
+        $todo_l = true;
+        for ($i = 0; $i < strlen($texto_sin_espacios); $i++) {
+            $todo_l = true;
+            if (ord($texto_sin_espacios[$i]) < ord("A") 
+            || ord($texto_sin_espacios[$i]) > ord("z")) {
+                $todo_l = false;
+                break;
+            }
+        }
+        return $todo_l;
+    }
+
     //errores
     $texto = trim($_POST["texto"]);
     $texto_m = strtoupper($texto);
     $texto_limpio = str_replace(" ", "", $texto_m);
-    $longitud_texto= strlen($texto_limpio);
-    $error_texto=($texto=="" || $longitud_texto<3 || !todo_letras($texto_limpio));
+    $longitud_texto = strlen($texto_limpio);
+    $error_texto = ($texto == "" || $longitud_texto < 3 || !todo_letras($texto_limpio));
     $error_form = $error_texto;
 }
 
@@ -57,20 +83,19 @@ if(isset($_POST["comparar"])){
             padding: 5px;
             background-color: lightgreen;
         }
-
     </style>
 </head>
 
 <body>
-<?php
-if (isset($_POST["comparar"])&& !$error_form) {
-    require "vistas/vista_formulario.php";
-    require "vistas/vista_respuesta.php";
-} else {
-    require "vistas/vista_formulario.php";
-}
+    <?php
+    if (isset($_POST["comparar"]) && !$error_form) {
+        require "vistas/vista_formulario.php";
+        require "vistas/vista_respuesta.php";
+    } else {
+        require "vistas/vista_formulario.php";
+    }
 
-?>
+    ?>
 </body>
 
 </html>
