@@ -50,6 +50,58 @@ if (isset($_POST["calcular"])) {
         <h1 class="centro">Fechas - Formulario</h1>
         <p>Introduzca una fecha:</p>
         <p>
+            <!--versión miguel ángel-->
+            <?php
+            /*echo  "<label for='dia1'>Día: </label>";
+            echo "<select name='dia1' id='dia1'>";
+            for ($i = 1; $i <= 31; $i++) {
+                if (isset($_POST["dia1"]) && $_POST["dia1"] == $i) {
+                    echo "<option selected value=''" . $i . "'>" . sprintf("%02d", $i) . "</option>";
+                } else {
+                    echo "<option value=''" . $i . "'>" . sprintf("%02d", $i) . "</option>";
+                }
+            }
+            echo "</select>";
+            $array_mes[1] = 'Enero';
+            $array_mes[2] = 'Febrero';
+            $array_mes[3] = 'Marzo';
+            $array_mes[4] = 'Abril';
+            $array_mes[5] = 'Mayo';
+            $array_mes[6] = 'Junio';
+            $array_mes[7] = 'Julio';
+            $array_mes[8] = 'Agosto';
+            $array_mes[9] = 'Septiembre';
+            $array_mes[10] = 'Octubre';
+            $array_mes[11] = 'Noviembre';
+            $array_mes[12] = 'Diciembre';
+            echo  "<label for='mes1'>Mes: </label>";
+            echo "<select name='mes1' id='mes1'>";
+            for ($i = 1; $i <= 12; $i++) {
+                if (isset($_POST["mes1"]) && $_POST["mes1"] == $i)
+                echo "<option selected value=''" . $i . "'>" . $array_mes[$i] . "</option>";
+                else                
+                echo "<option value=''" . $i . "'>" . $array_mes[$i] . "</option>";
+
+            }
+            echo "</select>";
+
+            $anio1Actual = date("Y"); //año actual
+            $anioInicio = $anio1Actual - 25; //25 años antes
+            $anioFin = $anio1Actual + 25; //25 años después
+
+
+            echo  "<label for='anio1'>Año: </label>";
+            echo "<select name='anio1' id='anio1'>";
+            for ($i = $anioInicio; $i <= $anioFin; $i++) {
+                if (isset($_POST["anio1"]) && $_POST["anio1"] == $i)
+                echo "<option selected value=''" . $i . "'>" . $i . "</option>";
+                else
+                echo "<option value=''" . $i . "'>" . $i . "</option>";
+
+            }
+            echo "</select>";*/
+            ?>
+
             <label for="dia1">Día: </label>
             <select name="dia1" id="dia1">
                 <?php
@@ -63,17 +115,17 @@ if (isset($_POST["calcular"])) {
             <select name="mes1" id="mes1">
                 <?php
                 $array_mes[1] = 'Enero';
-                $array_mes[] = 'Febrero';
-                $array_mes[] = 'Marzo';
-                $array_mes[] = 'Abril';
-                $array_mes[] = 'Mayo';
-                $array_mes[] = 'Junio';
-                $array_mes[] = 'Julio';
-                $array_mes[] = 'Agosto';
-                $array_mes[] = 'Septiembre';
-                $array_mes[] = 'Octubre';
-                $array_mes[] = 'Noviembre';
-                $array_mes[] = 'Diciembre';
+                $array_mes[2] = 'Febrero';
+                $array_mes[3] = 'Marzo';
+                $array_mes[4] = 'Abril';
+                $array_mes[5] = 'Mayo';
+                $array_mes[6] = 'Junio';
+                $array_mes[7] = 'Julio';
+                $array_mes[8] = 'Agosto';
+                $array_mes[9] = 'Septiembre';
+                $array_mes[10] = 'Octubre';
+                $array_mes[11] = 'Noviembre';
+                $array_mes[12] = 'Diciembre';
 
                 for ($i = 1; $i <= 12; $i++) {
                     if (isset($_POST['calcular']) && $_POST['mes1'] == $i) {
@@ -101,6 +153,7 @@ if (isset($_POST["calcular"])) {
                 echo "<span class='error'> Fecha no válida</span>";
             }
             ?>
+            
         </p>
         <p>Introduzca otra fecha:</p>
         <p>
@@ -149,6 +202,9 @@ if (isset($_POST["calcular"])) {
     if (isset($_POST["calcular"]) && !$error_form) {
 
         //obtenemos las dos fechas en segundos
+       # $tiempo1 = mktime(0, 0, 0, $_POST['mes1'], $_POST['dia1'],$_POST['anio1']);
+       # $tiempo2 = mktime(0, 0, 0, $_POST['mes2'], $_POST['dia2'],$_POST['anio2']);
+
         $fecha1 = strtotime($_POST['anio1'] . '/' . $_POST['mes1'] . '/' . $_POST['dia1']);
         $fecha2 = strtotime($_POST['anio2'] . '/' . $_POST['mes2'] . '/' . $_POST['dia2']);
 

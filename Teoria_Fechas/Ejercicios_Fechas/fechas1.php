@@ -1,13 +1,45 @@
 <?php
+function buenos_separadores($texto)
+{
+    return substr($texto, 2, 1) == "/"
+        && substr($texto, 5, 1) == "/";
+}
+function buenos_numeros($texto)
+{
+    return is_numeric(substr($texto, 0, 2))
+        && is_numeric(substr($texto, 3, 2))
+        && is_numeric(substr($texto, 6, 4));
+}
+function fecha_valida($texto)
+{
+    return checkdate(substr($texto, 3, 2), substr($texto, 0, 2), substr($texto, 6, 4)); //mes,día y año
+}
 //control de errores
 if (isset($_POST["calcular"])) {
-    //errores
+    ###control de errores de miguel ángel
+    $primera  = trim($_POST['primera']);
+    $segunda  = trim($_POST['segunda']);
+
+    $error_primera_fecha = $_POST["primera"] == ""
+        || strlen($_POST["primera"]) != 10
+        || !buenos_separadores($_POST["primera"])
+        || !buenos_numeros($_POST["primera"])
+        || !fecha_valida($_POST["primera"]);
+    $error_segunda_fecha = $_POST["segunda"] == ""
+        || strlen($_POST["segunda"]) != 10
+        || !buenos_separadores($_POST["segunda"])
+        || !buenos_numeros($_POST["segunda"])
+        || !fecha_valida($_POST["segunda"]);
+    $error_form = $error_primera_fecha || $error_segunda_fecha;
+
+    ########
+  /*    //errores
     //quitamos posibles espacios
     $primera  = trim($_POST['primera']);
     $segunda  = trim($_POST['segunda']);
     //comprobamos que los esparadores son los adecuados y que se han introducido números
-    $buenos_separadores1 = substr($primera, 2, 1) == "/" && substr($primera, 5, 1) == "/";
-    $primera_fecha = explode('/', $primera);
+  $buenos_separadores1 = substr($primera, 2, 1) == "/" && substr($primera, 5, 1) == "/";
+    $primera_fecha = explode('/', $primera); //separa las fechas con el /
     $numeros_buenos1 = is_numeric($primera_fecha[0]) && is_numeric($primera_fecha[1]) && is_numeric($primera_fecha[2]);
 
     $buenos_separadores2 = substr($segunda, 2, 1) == "/" && substr($segunda, 5, 1) == "/";
@@ -16,7 +48,7 @@ if (isset($_POST["calcular"])) {
 
     $error_primera_fecha = $primera == "" || strlen($primera) != 10 || !$buenos_separadores1 || !$numeros_buenos1 || !checkdate($primera_fecha[1], $primera_fecha[0], $primera_fecha[2]);
     $error_segunda_fecha = $segunda == "" || strlen($segunda) != 10 || !$buenos_separadores2 || !$numeros_buenos2 || !checkdate($segunda_fecha[1], $segunda_fecha[0], $segunda_fecha[2]);
-    $error_form = $error_primera_fecha || $error_segunda_fecha;
+    $error_form = $error_primera_fecha || $error_segunda_fecha;*/
 }
 
 ?>
@@ -92,23 +124,25 @@ if (isset($_POST["calcular"])) {
     if (isset($_POST["calcular"]) && !$error_form) {
 
         //obtenemos las dos fechas
-        $fecha1=explode("/",$_POST["primera"]);
-        $fecha2=explode("/",$_POST["segunda"]);
+        $fecha1 = explode("/", $_POST["primera"]);
+        $fecha2 = explode("/", $_POST["segunda"]);
 
         //las pasamos en segundos usando mktime
-        $tiempo1 = mktime(0,0,0,$fecha1[1],$fecha1[0],$fecha1[2]);
-        $tiempo2 = mktime(0,0,0,$fecha2[1],$fecha2[0],$fecha2[2]);
-        
+        $tiempo1 = mktime(0, 0, 0, $fecha1[1], $fecha1[0], $fecha1[2]);
+        $tiempo2 = mktime(0, 0, 0, $fecha2[1], $fecha2[0], $fecha2[2]);
+
         //calculamos la diferencia de segundos y lo pasamos a días
         $dif_segundos = abs($tiempo1 - $tiempo2);
-        $dias_pasados = floor($dif_segundos/(60*60*24));
+        $dias_pasados = floor($dif_segundos / (60 * 60 * 24));
 
         echo "<div class='respuesta'>";
         echo "<h1 class='centro'>Fechas - Resultado</h1>";
         //echo "<p>" . $fecha1 . "</p>";
         //echo "<p>" . $fecha2 . "</p>";
-        echo "<p>La diferencia en días entre las dos fechas es de " . floor($dias_pasados) . "</p>";
-        echo "</div>";
+        echo "<p>La diferencia en días entre las dos fechas es de: " . floor($dias_pasados) . "</p>";
+        printf ("<p>Lo mismo pero usando printf. La diferencia en días entre las dos fechas es de: %d </p>", floor($dias_pasados));
+        echo "<p>Lo mismo pero usando sprintf. La diferencia en días entre las dos fechas es de: " . sprintf("%d",floor($dias_pasados)) . "</p>";
+
     }
 
     ?>
