@@ -44,6 +44,16 @@
         echo "<p>".abs(-8)."</p>";//valor absoluto
         echo "<p>".floor(9.67)."</p>";//redondea hacia abajo
         echo "<p>".ceil(9.67)."</p>";//redondea hacia abajo
+
+
+        /*
+        date()->puede tener uno o dos argumentos
+        time()->número de segundos hasta ahora
+        checkdate(mes,dia,año)->comprobar si es una fecha válida
+        mktime(horas,minutos,segundos,mes,dia,año)-> te dice cuantos segundos han pasado de una fecha
+        strtotime("fecha")->te dice cuantos segundos han pasado de una fecha
+        
+    */
     ?>
 </body>
 </html>

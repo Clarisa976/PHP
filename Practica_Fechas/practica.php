@@ -39,7 +39,7 @@
 </head>
 
 <body>
-    <form action="index.php" method="post" class="principal">
+    <form action="practica.php" method="post" class="principal">
 
         <h1 class="centro">Reserva de aulas</h1>
         <p>
