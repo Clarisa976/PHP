@@ -31,8 +31,10 @@
         if (isset($_POST["btnEnviar"]) && $error_DNI){
             if ($_POST["DNI"] == "") {
             echo "<span class='error'>*Campo vacío*</span>";
-        }else {
-                echo "<span class='error'>DNI incorrecto</span>";
+        }elseif(!bien_escrito_romano($_POST["DNI"])) {
+                echo "<span class='error'>DNI escrito de forma incorrecta</span>";
+            }else{
+                echo "<span class='error'>DNI no válido</span>";
             }
         }
         ?>
@@ -52,7 +54,7 @@
         ?>
     </p>
     <p>
-        <label for="foto">Incluir mi foto:</label>
+        <label for="foto">Incluir mi foto: (Imagen con extensión, máx. 500kb)</label>
         <input type="file" name="foto" id="foto" accept="image/*">
         <?php
                 if (isset($_POST["btnEnviar"])&& $_FILES["foto"]["name"]!="" && !$error_foto) {

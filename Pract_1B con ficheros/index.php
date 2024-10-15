@@ -1,42 +1,6 @@
 <?php
-function LetraNIF($dni)
-{
-    return substr("TRWAGMYFPDXBNJZSQVHLCKEO", $dni % 23, 1);
-}
-function dni_valido($dni)
-{
-    $valido = true;
-    $numeroDNI = "";
-    if (strlen($dni) != 9) { //comprobamos que solo sea de tamaño 9
-        $valido = false;
-    } else {
-        //comprobamos que sean solo números
-        for ($i = 0; $i < strlen($dni) - 1; $i++) {
-            if (!is_numeric($dni[$i])) {
-                $valido = false;
-                break;
-            }
-            $numeroDNI .= $dni[$i];
-        }
-        //comprobamos la letra con la función anterior
-        if (LetraNIF($numeroDNI) != strtoupper($dni[strlen($dni) - 1])) {
-            $valido = false;
-        }
-    }
-    return $valido;
-}
-
-
-function tiene_extension($texto)
-{
-    $array_nombre = explode(".", $texto);
-    if (count($array_nombre) <= 1) { //si no tiene extensión devuelve falso
-        $respuesta = false;
-    } else {
-        $respuesta = end($array_nombre);
-    }
-    return $respuesta;
-}
+//funciones en un php aparte para tenerlo organizado
+require "src/funciones_ctes.php";
 
 
 
@@ -50,7 +14,7 @@ if (isset($_POST["btnEnviar"])) {
     $error_nombre = $_POST["nombre"] == "";
     $error_apellidos = $_POST["apellidos"] == "";
     $error_pass = $_POST["pass"] == "";
-    $error_DNI = $_POST["DNI"] == ""|| !dni_valido($_POST["DNI"]);
+    $error_DNI = $_POST["DNI"] == ""||!dni_bien_escrito($_POST["DNI"]) ||!dni_valido($_POST["DNI"]);
     $error_sexo = !isset($_POST["sexo"]);
     $error_comentarios = $_POST["comentarios"] == "";
 
@@ -75,6 +39,9 @@ if (isset($_POST["btnEnviar"])) {
     <style>
         .error {
             color: red;
+        }
+        img{
+            height: 200px;
         }
     </style>
 </head>
