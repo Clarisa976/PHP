@@ -28,8 +28,13 @@
         <label for="DNI">DNI</label><br>
         <input type="text" name="DNI" id="DNI" value="<?php if (isset($_POST["DNI"])) echo $_POST["DNI"]; ?>">
         <?php
-        if (isset($_POST["btnEnviar"]) && $error_DNI)
+        if (isset($_POST["btnEnviar"]) && $error_DNI){
+            if ($_POST["DNI"] == "") {
             echo "<span class='error'>*Campo vacío*</span>";
+        }else {
+                echo "<span class='error'>DNI incorrecto</span>";
+            }
+        }
         ?>
     </p>
     <p>
@@ -49,6 +54,20 @@
     <p>
         <label for="foto">Incluir mi foto:</label>
         <input type="file" name="foto" id="foto" accept="image/*">
+        <?php
+                if (isset($_POST["btnEnviar"])&& $_FILES["foto"]["name"]!="" && !$error_foto) {
+                    
+                    if ($_FILES["foto"]["error"]) {
+                        echo " <span class='error'>No se ha subido el archivo seleccionado al servidor</span>";
+                    }elseif (!tiene_extension($_FILES["foto"]["name"])) {
+                        echo " <span class='error'>Has elegido un fichero sin extensión</span>";
+                    }elseif (!getimagesize($_FILES["foto"]["tmp_name"])) {
+                        echo " <span class='error'>No has seleccionado un fichero de tipo imagen</span>";
+                    }else{
+                        echo " <span class='error'>El fichero seleccionado es mayor que 500kb</span>";
+                    }
+                }
+            ?>
     </p>
     <p>
         <label for="nacido">Nacido en: </label>
