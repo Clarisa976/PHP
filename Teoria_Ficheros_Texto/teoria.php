@@ -73,6 +73,7 @@
         echo "<h3>Lectura de una web</h3>";
         $web=file_get_contents("https://www.google.es");
         echo $web;
+        //para saber si un fichero existe usamos file_exists()
 
     ?>
 </body>
