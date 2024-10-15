@@ -31,6 +31,7 @@
         }
     </style>
 </head>
+
 <body>
     <h1>Teoría subir ficheros</h1>
     <form action="teoria_ficheros_requerido.php" method="post" enctype="multipart/form-data">
