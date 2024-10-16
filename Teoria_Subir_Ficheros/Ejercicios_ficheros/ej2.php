@@ -14,15 +14,15 @@ if (isset($_POST["btnEnviar"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejercicios de ficheros - Ejercicio 1</title>
+    <title>2</title>
     <style>
         .error{color: red;}
     </style>
 </head>
 
 <body>
-    <form action="ej1.php" method="post">
-        <h1>Ejercicio 1</h1>
+    <form action="ej2.php" method="post">
+        <h1>Ejercicio 2</h1>
         <p>
             <label for="numero">Introduce un número del 1 al 10</label>
             <input type="text" name="numero" id="numero">
@@ -37,22 +37,21 @@ if (isset($_POST["btnEnviar"])) {
                 }
             ?>
         </p>
-        <button type="submit" name="btnEnviar">Multiplicar</button>
+        <button type="submit" name="btnEnviar">Mostrar tabla</button>
         <?php
             if (isset($_POST["btnEnviar"]) && !$error_numero){
                 $fichero_tablas = "./Tablas/tabla_".$_POST["numero"].".txt";
-                if (file_exists($fichero_tablas)) {
-                    die("<p>No se ha podido crear el fichero '".$fichero_tablas."' porque ya existe</p>");                    
+                if (!file_exists($fichero_tablas)) {
+                    die("<p>No hay ningún fichero para esa tabla</p>");                    
                     }else{
-                    @$file=fopen($fichero_tablas,"w");
-                    for ($i = 1; $i <= 10; $i++) {
-                        $tablas_multiplicar = $i. " x ".$_POST["numero"]." = ".$i*$_POST["numero"];
-                        fwrite($file,PHP_EOL.$tablas_multiplicar);
+                    @$file=fopen($fichero_tablas,"r");
+                    $contenido_mostrar = file_get_contents($fichero_tablas);
+                    echo nl2br($contenido_mostrar);
                     }
                     fclose($file);
-                    echo "<p> Fichero generado con éxito </p>";
+                    echo "<p> Fichero leido con éxito </p>";
                 }
-            }
+            
         ?>
     </form>
 </body>
