@@ -46,12 +46,27 @@ if (isset($_POST["btnEnviar"])) {
                     }else{
                     @$file=fopen($fichero_tablas,"w");
                     for ($i = 1; $i <= 10; $i++) {
-                        $tablas_multiplicar = $i. " x ".$_POST["numero"]." = ".$i*$_POST["numero"];
-                        fwrite($file,PHP_EOL.$tablas_multiplicar);
+                        $tablas_multiplicar = $i. " x ".$_POST["numero"]." = ".$i*$_POST["numero"].PHP_EOL;
+                        fwrite($file,$tablas_multiplicar);
                     }
                     fclose($file);
                     echo "<p> Fichero generado con éxito </p>";
                 }
+               /* //versión de miguel angel
+                @$file=fopen( $fichero_tablas,"r");
+                if(!$file){
+                    @$file=fopen( $fichero_tablas,"w");
+                    if(!$file)
+                        die("<p>No se ha podido crear el fichero '".$fichero_tablas."' porque ya existe</p>");
+                    
+                    for ($i = 1; $i <= 10; $i++) {
+                        $tablas_multiplicar = $i. " x ".$_POST["numero"]." = ".$i*$_POST["numero"].PHP_EOL;
+                        fwrite($file,$tablas_multiplicar);
+                    }
+                }
+                fclose($file);
+                    echo "<p> Fichero generado con éxito </p>";
+                    */
             }
         ?>
     </form>
