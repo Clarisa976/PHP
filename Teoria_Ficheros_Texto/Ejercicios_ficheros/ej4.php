@@ -34,7 +34,7 @@ if (isset($_POST["btnEnviar"])) {
     <form action="ej4.php" method="post" enctype="multipart/form-data">
         <p>
             <label for="fichero">Seleccione un fichero de texto para contar sus palabras(Máx. 2,5MB): </label>
-            <input type="file" name="fichero" id="fichero" accept=".txt">
+            <input type="file" name="fichero" id="fichero">
             <?php
             if (isset($_POST["btnEnviar"]) && $error_fichero) {
                 if ($_FILES["fichero"]["name"] == "") {
@@ -55,8 +55,7 @@ if (isset($_POST["btnEnviar"])) {
     </form>
     <?php
     if (isset($_POST["btnEnviar"]) && !$error_fichero) {
-        //$contenido_fichero = file_get_contents($_FILES["fichero"]["tmp_name"]);
-        //echo "<h3>El número de palabras que contiene el archivo seleccionado es de: ".str_word_count($contenido_fichero)."</h3>";
+        
         $nombre_fichero = $_FILES["fichero"]["tmp_name"];
         @$file = fopen($nombre_fichero, "r");
         if (!$file) {
@@ -68,9 +67,8 @@ if (isset($_POST["btnEnviar"])) {
             if (trim($linea) == "") {
                 continue;
             }
-            $linea_limpia = str_replace([",", ".", ";"], " ", trim($linea));
-            $arr_palabras = explode(" ", $linea_limpia);
-            $numero_palabras += count($arr_palabras);
+            $numero_palabras += str_word_count($linea);
+           
         }
         fclose($file);
         echo "<h3>El archivo contiene " . $numero_palabras . " palabras</h3>";

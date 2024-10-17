@@ -45,6 +45,7 @@ if (isset($_POST["btnEnviar"])) {
                     die("<p>No hay ningún fichero para esa tabla</p>");                    
                     }else{
                     @$file=fopen($fichero_tablas,"r");
+                    echo "<h2>Tabla del " .$_POST["numero"]."</h2>";
                     $contenido_mostrar = file_get_contents($fichero_tablas);
                     echo nl2br($contenido_mostrar);
                     }
