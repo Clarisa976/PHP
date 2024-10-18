@@ -17,17 +17,20 @@
         table,
         td,
         th {
-            border: 1px solid black;
+            border: 1px solid black;            
         }
-
+        td{padding: 3px;}
         table {
             border-collapse: collapse;
+            width: 90%;
+            margin: 0 auto;
+            text-align: center;
         }
     </style>
 </head>
 
 <body>
-    <form action="ej5.php" method="post" enctype="multipart/form-data">
+    
         <h1>Ejercicio 5</h1>
 
         <?php
@@ -40,22 +43,23 @@
         } else {
 
             $linea = fgets($file);
-            $datos_fichero = explode("\t", $linea);
-            $columnas = count($datos_fichero);
+            $datos_linea_fichero = explode("\t", $linea);
+            $columnas = count($datos_linea_fichero);
             echo "<tr>";
             for ($i = 0; $i < $columnas; $i++) {
-                echo "<th>$datos_fichero[$i]</th>";
+                echo "<th>$datos_linea_fichero[$i]</th>";
             }
             echo "</tr>";
 
-            while (!feof($file)) {
-                $linea = fgets($file);
-                $datos_fichero = explode("\t", $linea);
+            //while (!feof($file)) {
+            //$linea = fgets($file);
+            while ($linea = fgets($file)) {    
+                $datos_linea_fichero = explode("\t", $linea);
                 echo "<tr>";
-                echo "<th>$datos_fichero[0]</th>";
+                echo "<th>".$datos_linea_fichero[0]."</th>";
                 for ($i = 1; $i < $columnas; $i++) {
-                    if (isset($datos_fichero[$i])) {
-                        echo "<td>$datos_fichero[$i]</td>";
+                    if (isset($datos_linea_fichero[$i])) {
+                        echo "<td>".$datos_linea_fichero[$i]."</td>";
                     } else {
                         echo "<td></td>";
                     }
@@ -67,7 +71,6 @@
 
         echo "</table>";
         ?>
-    </form>
 
 </body>
 
