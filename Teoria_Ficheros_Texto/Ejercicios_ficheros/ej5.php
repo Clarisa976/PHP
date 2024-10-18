@@ -1,11 +1,3 @@
-<?php
-if (isset($_POST["btnEnviar"])) {
-    //comprobar errores
-    $error_fichero = $_FILES["fichero"]["error"] || $_FILES["fichero"]["type"] != "text/plain" || $_FILES["fichero"]["size"] > 2500 * 1024;
-
-    //url: http://dwese.icarosproject.com/PHP/datos_ficheros.txt
-}
-?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -17,7 +9,18 @@ if (isset($_POST["btnEnviar"])) {
         .error {
             color: red;
         }
-        table{
+
+        th {
+            font-weight: bolder;
+        }
+
+        table,
+        td,
+        th {
+            border: 1px solid black;
+        }
+
+        table {
             border-collapse: collapse;
         }
     </style>
@@ -27,15 +30,45 @@ if (isset($_POST["btnEnviar"])) {
     <form action="ej5.php" method="post" enctype="multipart/form-data">
         <h1>Ejercicio 5</h1>
 
-    </form>
-    <?php
-    @$file = fopen("http://dwese.icarosproject.com/PHP/datos_ficheros.txt", "r");
-        while (!feof($file)) {
+        <?php
+        echo "<table>";
+        echo "<caption>PIB de los países de la UE</caption>";
+        @$file = fopen("http://dwese.icarosproject.com/PHP/datos_ficheros.txt", "r");
+
+        if (!$file) {
+            die("<p> No se ha podido abrir el fichero</p>");
+        } else {
+
             $linea = fgets($file);
-            echo "<p>".$linea."</p>";
-           
+            $datos_fichero = explode("\t", $linea);
+            $columnas = count($datos_fichero);
+            echo "<tr>";
+            for ($i = 0; $i < $columnas; $i++) {
+                echo "<th>$datos_fichero[$i]</th>";
+            }
+            echo "</tr>";
+
+            while (!feof($file)) {
+                $linea = fgets($file);
+                $datos_fichero = explode("\t", $linea);
+                echo "<tr>";
+                echo "<th>$datos_fichero[0]</th>";
+                for ($i = 1; $i < $columnas; $i++) {
+                    if (isset($datos_fichero[$i])) {
+                        echo "<td>$datos_fichero[$i]</td>";
+                    } else {
+                        echo "<td></td>";
+                    }
+                }
+                echo "</tr>";
+            }
         }
-    ?>
+        fclose($file);
+
+        echo "</table>";
+        ?>
+    </form>
+
 </body>
 
 </html>
