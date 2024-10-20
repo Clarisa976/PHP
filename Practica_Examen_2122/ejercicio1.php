@@ -15,13 +15,13 @@
 
         </p>
         <p>
-            <button type="submit" name="bntEnviar">Enviar</button>
+            <button type="submit" name="btnEnviar">Enviar</button>
         </p>
     </form>
     <?php
     if (isset($_POST["btnEnviar"])) {
-        $texto = $_POST["texto"];
-        function mi_strlend($texto)
+
+        function mi_strlen($texto)
         {
             $contador = 0;
             while (isset($texto[$contador])) {
@@ -30,7 +30,7 @@
             return $contador;
         }
 
-        echo "<p> Has introducido " . mi_strlend($texto) . " caracteres</p>";
+        echo "<p> Has introducido " . mi_strlen($_POST["texto"]) . " caracteres</p>";
     }
     ?>
 
