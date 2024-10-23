@@ -60,7 +60,7 @@ if (isset($_POST["btnEnviar"])) {
 
 //control de errores
 if (isset($_POST["btnEnviar"])) {
-    $error_formulario = $_POST["texto"] == "";
+    $error_formulario = $_POST["texto"] == ""; 
 }
 ?>
 <!DOCTYPE html>
