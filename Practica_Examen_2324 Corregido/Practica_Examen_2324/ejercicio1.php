@@ -21,8 +21,11 @@
     if (isset($_POST["btnGenerar"])) {
         //abrimos el fichero
         @$fd = fopen("claves_cesar.txt", "w");
+        //r+ lee y escribe pero no borra el contenido existente
         if (!$fd) {
-            die("Hubo problemas para generar el fichero");
+            //die("Hubo problemas para generar el fichero");
+            //es mejor no poner el die ya que no tendría sentido poner el else
+            echo "<p>Hubo problemas para generar el fichero</p>";
         } else {
             //escribimos el fichero
             //la primera línea
@@ -42,6 +45,7 @@
             }
             
            $contenido = file_get_contents("claves_cesar.txt");
+           //lo contrario es escribri todo en un fichero con file_put_contents($ruta,$lo que quieras poner dentro);
 
             echo "<h2>Respuesta</h2>";
             echo "<textarea name='txtGenerado' id='txtGenerado' rows='30' cols='100'>".$contenido."</textarea>"; 
