@@ -80,7 +80,7 @@ if (isset($_POST["btnCodificar"])) {
         fclose($fd);
 
         $texto = $_POST["texto"];
-        $despl = $_POST["despl"];
+        $despl = $_POST["despl"]%26;
         $respuesta = "";
         for ($i = 0; $i < strlen($texto); $i++) {
             if ($texto[$i] >= "A" && $texto[$i] <= "Z")
