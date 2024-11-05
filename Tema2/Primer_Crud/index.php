@@ -1,9 +1,9 @@
 <?php
 //constantes de la BD
-const SERVIDOR_BD = 'localhost';
-const USUARIO_BD = 'jose';
-const CLAVE_BD = 'josefa';
-const NOMBRE_BD = 'bd_foro';
+const SERVIDOR_BD="localhost";
+const USUARIO_BD="jose";
+const CLAVE_BD="josefa";
+const NOMBRE_BD="bd_foro";
 
 function error_pagina($title, $body)
 {
@@ -25,46 +25,31 @@ function error_pagina($title, $body)
 try {
     @$conexion = mysqli_connect(SERVIDOR_BD, USUARIO_BD, CLAVE_BD, NOMBRE_BD);
     //hay que indicar que los datos sean utf8
-    mysqli_set_charset($conexion, 'utf8');
+    mysqli_set_charset($conexion, "utf8");
 } catch (Exception $e) {
     die(error_pagina("Primer CRUD", "<p>No se ha podido conectar a la BD: " . $e->getMessage() . "</p>"));
 }
-//si existe la consulta
-if (isset($_POST["btnDetalle"])) {
-    try {
-        $consulta = "select * from usuarios where id_usuario='" . $_POST["btnDetalle"] . "'";
-        //la función que hace la consulta es   
-        $detalle_usuario = mysqli_query($conexion, $consulta);
-        //esto nos devolverá un recurso
+//si existe la consulta y el botón borrar
+if (isset($_POST["btnDetalle"])||isset($_POST["btnBorrar"])) {
+    if (isset($_POST["btnDetalle"])) $id_usuario=$_POST["btnDetalles"];
+    else $id_usuario=$_POST["btnBorrar"];
 
+    
+    try {
+        $consulta="select * from usuarios where id_usuario='".$id_usuario."'";
+        $detalle_usuario=mysqli_query($conexion,$consulta);
     } catch (Exception $e) {
         mysqli_close($conexion); //lo cerramos si no hace la consulta
         die(error_pagina("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
     }
 }
 
-
-//consulta para poder seleccionar un usuario a borrar
-if (isset($_POST["btnBorrar"])) {
-    try {
-        $consulta = "select * from usuarios where id_usuario='" . $_POST["btnBorrar"] . "'";
-        //la función que hace la consulta es   
-        $usuario_borrar = mysqli_query($conexion, $consulta);
-        //esto nos devolverá un recurso
-
-    } catch (Exception $e) {
-        mysqli_close($conexion); //lo cerramos si no hace la consulta
-        die(error_pagina("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
-    }
-}
 //consulta para poder borrar un usuario
-if (isset($_POST["btnBorrar_Continuar"])) {
+if (isset($_POST["btnContBorrar"])) {
     try {
-        $consulta = "delete from usuarios where id_usuario='" . $_POST["btnBorrar_Continuar"] . "'";
-        //la función que hace la consulta es   
-        $usuario_borrar_definitivo = mysqli_query($conexion, $consulta);
-        //esto nos devolverá un recurso
-
+        $consulta="delete from usuarios where id_usuario='".$_POST["btnContBorrar"]."'";
+        mysqli_query($conexion,$consulta);
+        $mensaje_accion="Usuario borrado con éxito";
     } catch (Exception $e) {
         mysqli_close($conexion); //lo cerramos si no hace la consulta
         die(error_pagina("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
@@ -72,10 +57,8 @@ if (isset($_POST["btnBorrar_Continuar"])) {
 }
 //consulta
 try {
-    $consulta = "select * from usuarios";
-    //la función que hace la consulta es   
-    $datos_usuarios = mysqli_query($conexion, $consulta);
-    //esto nos devolverá un recurso
+    $consulta="select * from usuarios";
+    $datos_usuarios=mysqli_query($conexion,$consulta);
 
 } catch (Exception $e) {
     mysqli_close($conexion); //lo cerramos si no hace la consulta
@@ -83,6 +66,18 @@ try {
 }
 
 mysqli_commit($conexion);
+
+
+
+if (isset($_POST["btnContAgregar"])) {
+    //comprobamos errores en el formulario
+    $error_nombre = $_POST["nombre"] == "";
+    $error_usuario = $_POST["usuario"] == "";
+    $error_clave = $_POST["clave"] == "";
+    $error_email = $_POST["email"] == "";
+    
+    $errores_form = $error_nombre|| $error_usuario || $error_clave|| $error_email;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -120,6 +115,15 @@ mysqli_commit($conexion);
             background: none;
             cursor: pointer;
         }
+
+        .mensaje {
+            font-size: 1.25rem;
+            color: aquamarine
+        }
+        .error{
+            color: crimson;
+            font-weight: bolder;
+        }
     </style>
 </head>
 
@@ -127,62 +131,25 @@ mysqli_commit($conexion);
     <h1>Lista de los usuarios</h1>
 
     <?php
+    require "vistas/vista_tabla_principal.php";
 
-    echo "<table>";
-    echo "<tr>";
-    echo "<th>Nombre usuario</th><th>Borrar</th><th>Editar</th>";
-    echo "</tr>";
-    while ($tupla = mysqli_fetch_assoc($datos_usuarios)) {
+    if(isset($mensaje_accion))
+        echo "<p class='mensaje'>".$mensaje_accion."</p>";
 
-        echo "<tr>";
-        echo "<td><form action='index.php' method='post'><button type='submit' title='Ver detalles' class='enlace' name='btnDetalle' value='" . $tupla["id_usuario"] . "'>" . $tupla["nombre"] . "</button></form></td>";
-        echo "<td><form action='index.php' method='post'><button type='submit' class='btn_img' name='btnBorrar' value='" . $tupla["id_usuario"] . "'><img src='images/borrar.png' title='Borrar' alt='borrar'></button></form></td>";
-        echo "<td><form action='index.php' method='post'><button type='submit' class='btn_img' name='btnEditar' value='" . $tupla["id_usuario"] . "' ><img src='images/editar.png' title='Editar' alt='Editar'></button></form></td>";
-        echo "</tr>";
+    if(isset($_POST["btnBorrar"]))
+        require "vistas/vista_borrar.php";
+
+    if(isset($_POST["btnDetalles"]))
+        require "vistas/vista_detalles.php";
+
+    if(isset($_POST["btnAgregar"])&& !$errores_form){
+        require "vistas/vista_agregar.php";
+
+    }else{
+        require "vistas/vista_agregar.php";
+
     }
-    echo "</table>";
-    mysqli_free_result($datos_usuarios);
-
-
-    if (isset($_POST["btnDetalle"])) {
-        echo "<h2>Detalles del usuario " . $_POST["btnDetalle"] . " </h2>";
-        //si hay tuplas
-        if (mysqli_num_rows($detalle_usuario) > 0) {
-            $tupla_detalles = mysqli_fetch_assoc($detalle_usuario);
-
-            echo "<div>";
-            echo "<strong>Nombre: </strong>" . $tupla_detalles["nombre"] . "<br>";
-            echo "<strong>Usuario: </strong>" . $tupla_detalles["usuario"] . "<br>";
-            echo "<strong>Clave: </strong><br>";
-            echo "<strong>Email: </strong>" . $tupla_detalles["email"] . "<br>";
-            echo "</div>";
-        } else {
-            echo "<p>El usuario seleccionado ya no se encuentra registrado</p>";
-        }
-        mysqli_free_result($detalle_usuario);
-    }
-
-
-    //si pulsamos borrar
-    if (isset($_POST["btnBorrar"])) {
-        if (mysqli_num_rows($usuario_borrar) > 0) {
-            $tupla_detalles = mysqli_fetch_assoc($usuario_borrar);
-
-
-            echo "<p>Se dispone a borrar a <strong>" . $tupla_detalles["nombre"] . "</strong></p>";
-            echo "<p>";
-            echo "<form action='index.php' method='post'><button type='submit' name='btnBorrar_Continuar' value'".$_POST["btnBorrar"]."'>Continuar</button>";
-            if (isset($_POST["btnBorrar_Continuar"])) {
-               echo "<p>Borrado con éxito</p>";
-               
-            }
-            echo "<button type='submit' name='btnAtras'>Atras</button></form>";
-            echo "</p>";
-        } else {
-            echo "<p>El usuario seleccionado ya no se encuentra registrado</p>";
-        }
-        mysqli_free_result($usuario_borrar);
-    }
+        
     ?>
 </body>
 
