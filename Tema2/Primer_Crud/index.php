@@ -71,10 +71,10 @@ mysqli_commit($conexion);
 
 if (isset($_POST["btnContAgregar"])) {
     //comprobamos errores en el formulario
-    $error_nombre = $_POST["nombre"] == "";
-    $error_usuario = $_POST["usuario"] == "";
-    $error_clave = $_POST["clave"] == "";
-    $error_email = $_POST["email"] == "";
+    $error_nombre = $_POST["nombre"] == "" || strlen($_POST["nombre"])>30;
+    $error_usuario = $_POST["usuario"] == ""|| strlen($_POST["usuario"])>20;
+    $error_clave = $_POST["clave"] == "" || strlen($_POST["clave"])>50;
+    $error_email = $_POST["email"] == ""|| strlen($_POST["clave"])>50;
     
     $errores_form = $error_nombre|| $error_usuario || $error_clave|| $error_email;
 }
@@ -142,11 +142,9 @@ if (isset($_POST["btnContAgregar"])) {
     if(isset($_POST["btnDetalles"]))
         require "vistas/vista_detalles.php";
 
-    if(isset($_POST["btnAgregar"])&& !$errores_form){
+    if(isset($_POST["btnAgregar"])){
         require "vistas/vista_agregar.php";
 
-    }else{
-        require "vistas/vista_agregar.php";
 
     }
         
