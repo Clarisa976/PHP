@@ -62,7 +62,7 @@ if (isset($_POST["btnContBorrar"])) {
     }
 }
 
-
+//control de errores de agregar y insert
 if (isset($_POST["btnContAgregar"])) {
     //comprobamos errores en el formulario
     $error_nombre = $_POST["nombre"] == "" || strlen($_POST["nombre"]) > 30;
@@ -79,7 +79,7 @@ if (isset($_POST["btnContAgregar"])) {
         }
     }
     $error_clave = $_POST["clave"] == "" || strlen($_POST["clave"]) > 50;
-    $error_email = $_POST["email"] == "" || strlen($_POST["clave"]) > 50 || !filter_var($_POST["email"], FILTER_VALIDATE_EMAIL);
+    $error_email = $_POST["email"] == "" || strlen($_POST["email"]) > 50 || !filter_var($_POST["email"], FILTER_VALIDATE_EMAIL);
     //usamos la función filter_var donde le pasaremos el correo y la función filter_validate_email para que compruebe si está bien
     if (!$error_email) {
         try {
@@ -97,16 +97,18 @@ if (isset($_POST["btnContAgregar"])) {
     try {
         $consulta = "INSERT INTO `usuarios`(`nombre`, `usuario`, `clave`, `email`) VALUES ('" . $_POST["nombre"] . "','" . $_POST["usuario"] . "','" . md5($_POST["clave"]) . "','" . $_POST["email"] . "')";
         $datos_usuarios = mysqli_query($conexion, $consulta);
+        $mensaje_accion = "Usuario insertado con éxito";
     } catch (Exception $e) {
         mysqli_close($conexion); //lo cerramos si no hace la consulta
         die(error_pagina("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
     }
 }
 
+//control de errores de editar y update
 if (isset($_POST["btnContEditar"])) {
     //comprobamos errores en el formulario
-    $error_nombre = $_POST["nombre"] == "" || strlen($_POST["nombre"]) > 30;
-    $error_usuario = $_POST["usuario"] == "" || strlen($_POST["usuario"]) > 20;
+    $error_nombre = $_POST["nombre"] == "";
+    $error_usuario = $_POST["usuario"] == "";
     //si tiene el nombre bien se consultará si está repetido
     if (!$error_usuario) {
         try {
@@ -120,7 +122,7 @@ if (isset($_POST["btnContEditar"])) {
     }
 
 
-    $error_email = $_POST["email"] == "" || strlen($_POST["clave"]) > 50 || !filter_var($_POST["email"], FILTER_VALIDATE_EMAIL);
+    $error_email = $_POST["email"] == "" || !filter_var($_POST["email"], FILTER_VALIDATE_EMAIL);
     //usamos la función filter_var donde le pasaremos el correo y la función filter_validate_email para que compruebe si está bien
     if (!$error_email) {
         try {
@@ -137,13 +139,13 @@ if (isset($_POST["btnContEditar"])) {
     //si no ha errores se inserta en la tabla
     if (!$error_form_editar) {
         try {
-            if ($_POST["clave"] == "") {
+            if ($_POST["clave"] == "")
+                $consulta = "update usuarios set nombre='" . $_POST["nombre"] . "', usuario='" . $_POST["usuario"] . "', email='" . $_POST["email"] . "' where id_usuario='" . $_POST["btnContEditar"] . "'";
+            else
+                $consulta = "update usuarios set nombre='" . $_POST["nombre"] . "', usuario='" . $_POST["usuario"] . "', clave='" . md5($_POST["clave"]) . "', email='" . $_POST["email"] . "' where id_usuario='" . $_POST["btnContEditar"] . "'";
 
-                $consulta = "UPDATE usuarios set  nombre='" . $_POST["nombre"] . "', usuario='" . $_POST["usuario"] . "', email='" . $_POST["email"] . "'";
-                $datos_usuarios = mysqli_query($conexion, $consulta);
-            } else {
-                $consulta = "UPDATE usuarios set  nombre='" . $_POST["nombre"] . "', usuario='" . $_POST["usuario"] . "',clave='" . $_POST["clave"] . "', email='" . $_POST["email"] . "'";
-            }
+            $resultado_editar = mysqli_query($conexion, $consulta);
+            $mensaje_accion = "Usuario editado con éxito";
         } catch (Exception $e) {
             mysqli_close($conexion); //lo cerramos si no hace la consulta
             die(error_pagina("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
@@ -226,6 +228,9 @@ mysqli_close($conexion);
     if (isset($mensaje_accion))
         echo "<p class='mensaje'>" . $mensaje_accion . "</p>";
 
+    if (isset($mensaje_accion))
+        echo "<p class='mensaje'>" . $mensaje_accion . "</p>";
+
     if (isset($_POST["btnBorrar"]))
         require "vistas/vista_borrar.php";
 
@@ -237,24 +242,6 @@ mysqli_close($conexion);
 
 
     if (isset($_POST["btnEditar"]) || isset($_POST["btnContEditar"]) && $error_form_editar) {
-
-        if (isset($_POST["btnEditar"])) {
-            if (mysqli_num_rows($detalle_usuario) > 0) {
-                $tupla_detalles = mysqli_fetch_assoc($detalle_usuario);
-                $nombre = $tupla_detalles["nombre"];
-                $usuario = $tupla_detalles["usuario"];
-                $email = $tupla_detalles["email"];
-                mysqli_free_result($detalle_usuario);
-            } else {
-                mysqli_free_result($detalle_usuario);
-                echo "<p>El usuario ya no se encuentra registrado en la BD</p>";
-            }
-        } else {
-            $id_usuario = $_POST["btnContEditar"];
-            $nombre = $_POST["nombre"];
-            $usuario = $_POST["usuario"];
-            $email = $_POST["email"];
-        }
         require "vistas/vista_editar.php";
     }
     ?>
