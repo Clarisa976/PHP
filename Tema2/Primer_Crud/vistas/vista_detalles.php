@@ -1,5 +1,5 @@
 <?php
-echo "<h2>Detalles del usuario " . $_POST["btnDetalles"] . "</h2>";
+echo "<h2>Detalles del usuario " . $_POST["btnDetalle"] . "</h2>";
 if (mysqli_num_rows($detalle_usuario) > 0) {
     $tupla_detalles = mysqli_fetch_assoc($detalle_usuario);
     echo "<p>";
