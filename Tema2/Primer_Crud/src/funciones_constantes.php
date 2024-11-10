@@ -27,7 +27,7 @@ function repetido($conexion, $tabla, $columna, $valor,$columna_clave=null,$valor
 {
     try {
         if(isset($columna_clave)){
-            $consulta = "select " . $columna . " from " . $tabla . " where " . $columna . "='" . $valor . "'";
+            $consulta = "select " . $columna . " from " . $tabla . " where " . $columna . "='" .$valor."' AND ".$columna_clave."<>'".$valor_clave."'";
             $usuario_repe = mysqli_query($conexion, $consulta);
             $respuesta = (mysqli_num_rows($usuario_repe) > 0);
         }else{
