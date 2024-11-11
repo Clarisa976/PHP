@@ -10,6 +10,7 @@ try {
     //indicar que la conexión es uft8
     mysqli_set_charset($conexion, "utf8");
 } catch (Exception $e) {
+    session_destroy();
     die(error_pagina("Práctica 8", "<p>Error al intentar conectar con la base de datos: " . $e->getMessage() . "</p>"));
 }
 
@@ -44,6 +45,7 @@ if (isset($_POST["btnContBorrar"])) {
 
     } catch (Exception $e) {
         mysqli_close($conexion);
+        session_destroy();
         die(error_pagina("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
     }
 }
@@ -60,6 +62,7 @@ if (isset($_POST["btnContAgregar"])) {
         $error_usuario = repetido($conexion, "usuarios", "usuario", $_POST["usuario"]);
         if (is_string($error_usuario)) {
             mysqli_close($conexion);
+            session_destroy();
             die(error_pagina("Práctica 8", "<p>No se ha podido realizar la consulta: " . $error_usuario . "</p>"));
         }
     }
@@ -69,14 +72,6 @@ if (isset($_POST["btnContAgregar"])) {
     $dni_letra = strtoupper(substr($_POST["dni"], -1));
     $error_dni = $_POST["dni"] == "" || LetraNIF($dni_numero) != substr($dni_letra, -1);
 
-    //si el DNI ya existe
-    /* if (!$error_dni) {
-         $error_dni = repetido($conexion, "usuarios", "dni", $dni_may);
-         if (is_string($error_dni)) {
-             mysqli_close($conexion);
-             die(error_pagina("Práctica 8", "<p>No se ha podido realizar la consulta: ".$error_dni."</p>"));
-         }
-     }*/
 
     $error_sexo = !isset($_POST["sexo"]);
     $error_foto = $_FILES["foto"]["name"] != "" && ($_FILES["foto"]["error"] || !tiene_extension($_FILES["foto"]["name"]) || !getimagesize($_FILES["foto"]["tmp_name"]) || $_FILES["foto"]["size"] > 500 * 1024);
@@ -112,6 +107,7 @@ if (isset($_POST["btnContAgregar"])) {
             exit;
         } catch (Exception $e) {
             mysqli_close($conexion);
+            session_destroy();
             die(error_pagina("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
         }
     }
@@ -119,7 +115,7 @@ if (isset($_POST["btnContAgregar"])) {
 
 }
 
-//NO FUNCIONA :D
+//TIENES QUE CAMBIAR TODO SI O SI Y ESO ESTÁ FEO
 //consulta editar
 if (isset($_POST["btnContEditar"])) {
     //Compruebo errores
@@ -129,6 +125,7 @@ if (isset($_POST["btnContEditar"])) {
         $error_usuario = repetido($conexion, "usuarios", "usuario", $_POST["usuario"]);
         if (is_string($error_usuario)) {
             mysqli_close($conexion);
+            session_destroy();
             die(error_page("Primer CRUD", "<p>" . $error_usuario . "</p>"));
         }
 
@@ -160,7 +157,7 @@ if (isset($_POST["btnContEditar"])) {
                     clave='" . md5($_POST["clave"]) . "',
                     dni='" . $_POST["dni"] . "',
                     sexo='" . $_POST["sexo"] . "'
-                    WHERE id_usuario='" . $_POST["id_usuario"] . "'";
+                    WHERE id_usuario='" . $_POST["id_usuario"] . "' AND id_usuario <>'" . $_POST["btnContEditar"] . "'";
             }
             mysqli_query($conexion, $consulta);
 
@@ -192,94 +189,19 @@ if (isset($_POST["btnContEditar"])) {
             exit;
         } catch (Exception $e) {
             mysqli_close($conexion);
+            session_destroy();
             die(error_page("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
         }
     }
 }
-/*if (isset($_POST["btnContEditar"])) {
 
-    $error_usuario = $_POST["usuario"] == "" || strlen($_POST["usuario"]) > 30;
-    //comprobar si está repetido
-    if (!$error_usuario) {
-        $error_usuario = repetido($conexion, "usuarios", "usuario", $_POST["usuario"], "id_usuario", $_POST["btnContEditar"]);
-        if (is_string($error_usuario)) {
-            mysqli_close($conexion);
-            die(error_pagina("Primer CRUD", "<p>" . $error_usuario . "</p>"));
-        }
-    }
-    $error_clave = $_POST["clave"] == "" || strlen($_POST["clave"]) > 50;
-    $error_nombre = $_POST["nombre"] == "" || strlen($_POST["nombre"]) > 50;
-    $dni_metido = strtoupper($_POST["dni"]);
-    $error_dni = $_POST["dni"] == "" || !dni_bien_escrito($dni_metido) || !dni_valido($dni_metido);
-    //comprobar si está repetido
-    if (!$error_dni) {
-        $error_dni = repetido($conexion, "usuarios", "dni", $_POST["dni"], "id_usuario", $_POST["btnContEditar"]);
-        if (is_string($error_dni)) {
-            mysqli_close($conexion);
-            die(error_pagina("Primer CRUD", "<p>" . $error_dni . "</p>"));
-        }
-    }
-    $error_foto = $_FILES["foto"]["name"] != "" && ($_FILES["foto"]["error"] || !getimagesize($_FILES["foto"]["tmp_name"]) || !tiene_extension($_FILES["foto"]["name"]) || $_FILES["foto"]["size"] > 500 * 1024);
-
-    $error_formulario_editar = $error_nombre || $error_usuario || $error_clave || $error_dni || $error_foto;
-
-    //si el formulario editar no tiene errores
-    if (!$error_formulario_editar) {
-        try {
-            //si cambia o no la contraseña
-            if ($_POST["clave"] == "")
-                $consulta = "update usuarios set nombre='" . $_POST["nombre"] . "', usuario='" . $_POST["usuario"] . "', dni='" . $dni_may . "' where  id_usuario='" . $_POST["btnContEditar"] . "'";
-            else
-                $consulta = "update usuarios set nombre='" . $_POST["nombre"] . "', usuario='" . $_POST["usuario"] . "', clave='" . md5($_POST["clave"]) . "', dni='" . $dni_may . "' where  id_usuario='" . $_POST["btnContEditar"] . "'";
-
-            $resultado_editar = mysqli_query($conexion, $consulta);
-            $_SESSION["mensaje_accion"] = "Usuario editado con éxito";
-            header("Location:index.php");
-            exit;
-        } catch (Exception $e) {
-            mysqli_close($conexion); //lo cerramos si no hace la consulta
-            die(error_pagina("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
-        }
-
-        //si cambia o no la foto
-        //try {
-        if ($_FILES["foto"]["name"] != "") {
-            $array_nombre = explode(".", $_FILES["foto"]["name"]);
-            $nombre_foto = "img_" . $_POST["id_usuario"] . "." . end($array_nombre);
-
-            @$var = move_uploaded_file($_FILES["foto"]["tmp_name"], "Img/" . $nombre_foto);
-            if ($var) {
-                if ($_POST["foto_bd"] != $nombre_foto) {
-                    //Actualizo en BD
-                    try {
-                        $consulta = "update usuarios set foto='" . $nombre_foto . "' where id_usuario='" . $_POST["id_usuario"] . "'";
-                        mysqli_query($conexion, $consulta);
-                    } catch (Exception $e) {
-                        //Al no poder actualizar borro la nueva que acabo de mover
-                        unlink("Img/" . $nombre_foto);
-                        mysqli_close($conexion);
-                        die(error_page("Práctica 8", "<h1>Práctica 8</h1><p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
-                    }
-                    //Borro la antigua que había con otra extensión
-                    unlink("Img/" . $_POST["foto_bd"]);
-                }
-            }
-        }
-
-
-        mysqli_close($conexion);
-        header("Location:index.php");
-        exit;
-
-    }
-
-}*/
 //pedimos los datos de usuario
 try {
     $consulta = "select * from usuarios";
     $datos_usuarios = mysqli_query($conexion, $consulta);
 } catch (Exception $e) {
     mysqli_close($conexion);
+    session_destroy();
     die(error_pagina("Práctica 8", "<p>Error al intentar conectar con la base de datos: " . $e->getMessage() . "</p>"));
 }
 
@@ -303,7 +225,7 @@ mysqli_close($conexion);
         table {
             border-collapse: collapse;
             text-align: center;
-            width: 100%;
+            width: 90%;
 
         }
 
@@ -354,11 +276,10 @@ mysqli_close($conexion);
     <?php
 
     if (isset($_SESSION["mensaje_accion"])) {
-        echo "<p class='mensaje'>" . $_SESSION["mensaje_accion"] . "</p>";
+        echo "<h3 class='mensaje'>" . $_SESSION["mensaje_accion"] . "</h3>";
         session_destroy();
     }
-    require "vistas/vista_tabla_usuarios.php";
-
+   
 
     if (isset($_POST["btnDetalle"]))
         require "vistas/vista_detalles.php";
@@ -375,6 +296,8 @@ mysqli_close($conexion);
     if (isset($_POST["btnAgregar"]) || isset($_POST["btnContAgregar"]) && $error_formulario_agregar) {
         require "vistas/vista_agregar.php";
     }
+
+    require "vistas/vista_tabla_usuarios.php";
 
     ?>
 </body>

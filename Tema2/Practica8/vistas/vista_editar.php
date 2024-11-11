@@ -12,6 +12,7 @@ if (isset($_POST["btnEditar"])) {
         mysqli_free_result($resultado);
     } else {
         mysqli_free_result($resultado);
+        session_destroy();
         die("<p>El usuario ya no se encuentra registrado en la BD</p></body></html>");
     }
 } else {
