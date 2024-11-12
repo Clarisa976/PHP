@@ -5,6 +5,8 @@ const USUARIO_BD = "jose";
 const CLAVE_BD = "josefa";
 const NOMBRE_BD = "bd_cv";
 
+const NOMBRE_IMAGEN_DEFECTO_BD = "no_imagen.jpg";
+
 function error_page($title, $body)
 {
     return '<!DOCTYPE html>

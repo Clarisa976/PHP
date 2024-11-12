@@ -38,6 +38,8 @@ if (isset($_POST["btnContBorrar"])) {
     try {
         $consulta = "delete from usuarios where id_usuario='" . $_POST["btnContBorrar"] . "'";
         mysqli_query($conexion, $consulta);
+        if($_POST["nombre_foto_bd"]!=NOMBRE_IMAGEN_DEFECTO_BD)
+        unlink("Img/".$_POST["nombre_foto_bd"]);
         //mensaje de confirmación
         $_SESSION["mensaje_accion"] = "Usuario borrado con éxito";
         header("Location:index.php");
@@ -71,7 +73,15 @@ if (isset($_POST["btnContAgregar"])) {
     $dni_numero = substr($_POST["dni"], 0, -1);
     $dni_letra = strtoupper(substr($_POST["dni"], -1));
     $error_dni = $_POST["dni"] == "" || LetraNIF($dni_numero) != substr($dni_letra, -1);
-
+    //si el dni ya existe
+    if (!$error_dni) {
+        $error_dni = repetido($conexion, "usuarios", "dni", $_POST["dni"]);
+        if (is_string($error_dni)) {
+            mysqli_close($conexion);
+            session_destroy();
+            die(error_pagina("Práctica 8", "<p>No se ha podido realizar la consulta: " . $error_dni . "</p>"));
+        }
+    }
 
     $error_sexo = !isset($_POST["sexo"]);
     $error_foto = $_FILES["foto"]["name"] != "" && ($_FILES["foto"]["error"] || !tiene_extension($_FILES["foto"]["name"]) || !getimagesize($_FILES["foto"]["tmp_name"]) || $_FILES["foto"]["size"] > 500 * 1024);
@@ -82,14 +92,49 @@ if (isset($_POST["btnContAgregar"])) {
 
     // Si no hay errores, proceder con la inserción en la base de datos
     if (!$error_formulario_agregar) {
-        try {
-            // Establecer 'no_imagen.jpg' como valor por defecto
+        try{
+            $consulta="INSERT INTO usuarios (nombre, usuario, clave, dni, sexo) VALUES ('" . $_POST["nombre"] . "', '" . $_POST["usuario"] . "', '" . md5($_POST["clave"]) . "', '" . $_POST["dni"] . "', '" . $_POST["sexo"] . "')";
+            mysqli_query($conexion, $consulta);
+        }catch (Exception $e) {
+            mysqli_close($conexion);
+            session_destroy();
+            die(error_pagina("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+        }
+        $_SESSION["mensaje_accion"] = "Usuario insertado con éxito";
+        //imagen:
+        if ($_FILES["foto"]["name"] != "") {
+            $ultimo_id=mysqli_insert_id($conexion);//pilla el último id insertado en la bd
+            $array_extension= tiene_extension($_FILES["foto"]["name"]);
+            $nombre_foto = "img_".$ultimo_id.".".$extension;
+
+            //la movemos
+            @$var=move_uploaded_file($_FILES["foto"]["tmp_name"], "Img/" . $nombre_foto);
+            if ($var) {
+                //si la consulta falla
+                try{
+                    $consulta="update usuarios set foto='".$nombre_foto."' where id_usuario='".$ultimo_id."'";
+                    mysqli_query($conexion, $consulta);
+                }catch (Exception $e) {
+                    unlink("Img/".$nombre_foto);//si falla no nos quedamos con la foto
+                    $_SESSION["mensaje_accion"] = "Usuario insertado con éxito";
+                }
+            }else{
+                $_SESSION["mensaje_accion"] = "Usuario insertado con éxito pero con la imagen por defecto";
+            }
+
+        }
+
+
+        header("Location:index.php");
+        exit;
+       /* try {
+            //no_imagen.jpg por defecto
             $nombre_foto = 'no_imagen.jpg';
 
-            // Si se ha subido una foto, procesarla
+            //si se ha subido una foto
             if ($_FILES["foto"]["name"] != "") {
                 $extension = tiene_extension($_FILES["foto"]["name"]);
-                // Generar un nombre único para la imagen
+                //crear un nombre único para la imagen
                 $nombre_foto = "img_" . time() . "." . $extension;
 
                 if (!move_uploaded_file($_FILES["foto"]["tmp_name"], "Img/" . $nombre_foto)) {
@@ -109,7 +154,7 @@ if (isset($_POST["btnContAgregar"])) {
             mysqli_close($conexion);
             session_destroy();
             die(error_pagina("Primer CRUD", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
-        }
+        }*/
     }
 
 

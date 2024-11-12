@@ -59,7 +59,7 @@
     }
     ?>
     <br />
-    <input type="radio" name="sexo" id="hombre" value="hombre" <?php if (isset($_POST["sexo"]) && $_POST["sexo"] == "hombre") {
+    <input type="radio" name="sexo" id="hombre" checked value="hombre" <?php if (isset($_POST["sexo"]) && $_POST["sexo"] == "hombre") {
         echo "checked";
     } ?>><label for="hombre">Hombre</label></br>
     <input type="radio" name="sexo" id="mujer" value="mujer" <?php if (isset($_POST["sexo"]) && $_POST["sexo"] == "mujer") {
