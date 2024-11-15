@@ -14,12 +14,10 @@ try {
 
 //vinculamos los botones con el id_usuario
 if (isset($_POST["btnDetalles"]) || isset($_POST["btnBorrar"]) || isset($_POST["btnEditar"])) {
-    if (isset($_POST["btnBorrar"])) {
-        $id_usuario = $_POST["btnBorrar"];
-    } else if (isset($_POST["btnEditar"])) {
+    if (isset($_POST["btnEditar"])) {
         $id_usuario = $_POST["btnEditar"];
     } else {
-        $id_usuario = $_POST["btnDetalles"];
+        $id_usuario = $_POST["id_usuario"];
     }
 
 

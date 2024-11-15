@@ -1,5 +1,5 @@
 <?php
- if (isset($_POST["btnEditar"])) {
+ if (isset($detalles_usuario)) {
     // Obtenemos los datos del usuario a editar
     $id_usuario = $_POST["btnEditar"];
 
