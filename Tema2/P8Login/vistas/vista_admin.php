@@ -14,5 +14,7 @@
     <div>
         Bienvenido <strong><?php echo $datos_usuario_log["usuario"];?></strong> - <form class="enlinea" action="index.php" method="post"><button class="enlace" type="submit" name="btnCerrarSession">Salir</button></form>
     </div>
+    <h2>Eres admin</h2>
+    <?php require "index_crud.php"; ?>
 </body>
 </html>

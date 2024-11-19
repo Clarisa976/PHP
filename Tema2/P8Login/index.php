@@ -1,5 +1,5 @@
 <?php
-session_name("PLogin");
+session_name("P8Login");
 session_start();
 require "src/funciones_ctes.php";
 
@@ -24,7 +24,7 @@ if(isset($_SESSION["usuario"]))
 
     }
     
-    mysqli_close($conexion);
+    //mysqli_close($conexion);
 }
 else
 {
