@@ -7,7 +7,7 @@ try
 catch(Exception $e)
 {
     session_destroy();
-    die(error_page("Primer Login","<p>No se ha podido conectar a la BD: ".$e->getMessage()."</p>"));
+    die(error_page("Práctica 9","<p>No se ha podido conectar a la BD: ".$e->getMessage()."</p>"));
 }
 // Me he conectado y ahora hago la consulta
 try
@@ -19,7 +19,7 @@ catch(Exception $e)
 {
     mysqli_close($conexion);
     session_destroy();
-    die(error_page("Primer Login","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+    die(error_page("Práctica 9","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
 }
 
 if(mysqli_num_rows($result_select)<=0)

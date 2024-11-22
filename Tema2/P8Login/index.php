@@ -10,21 +10,23 @@ if(isset($_POST["btnCerrarSession"]))
     exit;
 }
 
-if(isset($_SESSION["usuario"]))
-{
+if(isset($_SESSION["usuario"])){
     //Control de baneo  
     //consulta a la BD y si está inicio sesión y salto a index
     require "src/seguridad.php";
 
     // Muestro vista después de Login
-    if($datos_usuario_log["tipo"]=="normal"){
+    if($datos_usuario_log["tipo"]=="normal"|| (isset($_POST["btnContRegistro"]) && $error_form_agregar)){
         require "vistas/vista_normal.php";
     }else{
         require "vistas/vista_admin.php";
 
     }
     
-    //mysqli_close($conexion);
+    mysqli_close($conexion);
+}elseif(isset($_POST["btnRegistro"])){
+    require "vistas/vista_registro.php";
+    
 }
 else
 {
