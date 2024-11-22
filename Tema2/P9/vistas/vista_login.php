@@ -57,10 +57,7 @@ if(isset($_POST["btnLogin"]))
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Práctica 9</title>
-    <style>
-        .error{color:red}
-        .mensaje{color:blue;font-size:1.25rem}
-    </style>
+    <link rel="stylesheet" href="src/style.css">
 </head>
 <body>
     <h1>Práctica 9</h1>

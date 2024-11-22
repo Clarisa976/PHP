@@ -1,0 +1,33 @@
+table,
+th,
+td {
+    border: 1px solid black
+}
+
+table {
+    border-collapse: collapse;
+    width: 90%;
+    margin: 0 auto;
+    text-align: center
+}
+
+img {
+    height: 100px
+}
+
+.enlace {
+    background: none;
+    border: none;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.mensaje {
+    font-size: 1.25rem;
+    color: cadetblue
+}
+
+.error {
+    color: crimson
+}

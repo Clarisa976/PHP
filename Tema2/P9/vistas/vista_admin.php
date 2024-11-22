@@ -260,10 +260,7 @@ catch(Exception $e)
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Práctica 9</title>
-    <style>
-        .enlinea{display:inline}
-        .enlace{background:none;border:none;color:blue;text-decoration: underline;cursor: pointer;}
-    </style>
+    <link rel="stylesheet" href="src/style.css">
 </head>
 <body>
     <h1>Práctica 9</h1>
@@ -273,20 +270,20 @@ catch(Exception $e)
     <h2>Eres admin</h2>
     <?php 
      if(isset($_POST["btnDetalles"]))
-     require "vistas/vista_detalles.php";
+     require "vistas/vistas_admin/vista_detalles.php";
 
  if(isset($_POST["btnBorrar"]))
-     require "vistas/vista_borrar.php";
+     require "vistas/vistas_admin/vista_borrar.php";
 
  if(isset($_POST["btnAgregar"]) || (isset($_POST["btnContAgregar"])&& $error_form_agregar ) )
-     require "vistas/vista_agregar.php";
+     require "vistas/vistas_admin/vista_agregar.php";
 
 
  if(isset($_POST["btnEditar"]) || (isset($_POST["btnContEditar"])&& $error_form_editar ))
-     require "vistas/vista_editar.php";
+     require "vistas/vistas_admin/vista_editar.php";
 
  if(isset($_POST["btnBorrarFoto"]) )
-     require "vistas/vista_borrar_foto.php";
+     require "vistas/vistas_admin/vista_borrar_foto.php";
 
  if(isset($_SESSION["mensaje_accion"]))
  {
@@ -294,7 +291,7 @@ catch(Exception $e)
      //session_destroy();
  }
 
- require "vistas/vista_tabla_principal.php";
+ require "vistas/vistas_admin/vista_tabla_principal.php";
     
     ?>
 </body>
