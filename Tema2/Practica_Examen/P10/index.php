@@ -1,7 +1,6 @@
 <?php
-session_name("Examen2_23_24");
+session_name("P10");
 session_start();
-
 require "src/funciones_ctes.php";
 
 try
@@ -12,7 +11,7 @@ try
 catch(Exception $e)
 {
     session_destroy();
-    die(error_page("Examen2 PHP","<p>No se ha podido conectar a la BD: ".$e->getMessage()."</p>"));
+    die(error_page("Práctica 10","<p>No se ha podido conectar a la BD: ".$e->getMessage()."</p>"));
 }
 
 if(isset($_POST["btnAgregar"]))
@@ -27,7 +26,7 @@ if(isset($_POST["btnAgregar"]))
     {
         session_destroy();
         mysqli_close($conexion);
-        die(error_page("Examen2 PHP","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+        die(error_page("Práctica 10","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
     }
 
     $_SESSION["mensaje_accion"]="Grupo insertado con éxito";
@@ -50,7 +49,7 @@ if(isset($_POST["btnQuitar"]))
     {
         session_destroy();
         mysqli_close($conexion);
-        die(error_page("Examen2 PHP","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+        die(error_page("Práctica 10","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
     }
 
     $_SESSION["mensaje_accion"]="Grupo borrado con éxito";
@@ -83,7 +82,7 @@ catch(Exception $e)
 {
     session_destroy();
     mysqli_close($conexion);
-    die(error_page("Examen2 PHP","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+    die(error_page("Práctica 10","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
 }
 
 if(isset($_POST["profesor"]))
@@ -98,7 +97,7 @@ if(isset($_POST["profesor"]))
     {
         session_destroy();
         mysqli_close($conexion);
-        die(error_page("Examen2 PHP","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+        die(error_page("Práctica 10","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
     }
 
     
@@ -125,7 +124,7 @@ if(isset($_POST["dia"]))
     {
         session_destroy();
         mysqli_close($conexion);
-        die(error_page("Examen2 PHP","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+        die(error_page("Práctica 10","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
     }
 
     try
@@ -138,10 +137,22 @@ if(isset($_POST["dia"]))
     {
         session_destroy();
         mysqli_close($conexion);
-        die(error_page("Examen2 PHP","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+        die(error_page("Práctica 10","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
     }
 
 }
+// He pasado el control de baneo
+//Ahora controlo el tiempo de inactividad
+
+if(time()-$_SESSION["ultm_accion"]>INACTIVIDAD*60)
+{
+    session_unset();
+    $_SESSION["mensaje_seguridad"]="Su tiempo de sesión ha expirado. Por favor, vuelva a loguearse";
+    header("Location:index.php");
+    exit;
+}
+
+$_SESSION["ultm_accion"]=time();
 
 
 
@@ -154,7 +165,7 @@ mysqli_close($conexion);
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Examen2 PHP</title>
+        <title>Práctica 10</title>
         <style>
             .centrado{text-align:center}
             table, td, th{border:1px solid black}
@@ -165,7 +176,7 @@ mysqli_close($conexion);
         </style>
     </head>
     <body>
-        <h1>Examen2 PHP</h1>
+        <h1>Práctica 10</h1>
         <h2>Horario de los Profesores</h2>
         <form action="index.php" method="post">
             <p>
