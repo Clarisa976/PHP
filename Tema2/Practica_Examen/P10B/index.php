@@ -1,5 +1,5 @@
 <?php
-session_name("P10");
+session_name("P10B");
 session_start();
 require "src/funciones_ctes.php";
 
@@ -21,11 +21,16 @@ if(isset($_SESSION["usuario"]))
 
     // Muestro vista después de Login
     if($datos_usuario_log["tipo"]=="normal"){
-        require "vistas/vista_usuario.php";
+        //header("Location: usuario/index.php");
+    
+        require "usuario/index.php";
     }else{
-        require "vistas/vista_admin.php";
+        mysqli_close($conexion);
+        header("Location: admin/index.php");
+        exit;
+        //require "admin/index.php";
 
-    }mysqli_close($conexion);
+    }
    
 }else{
     require "vistas/vista_login.php";

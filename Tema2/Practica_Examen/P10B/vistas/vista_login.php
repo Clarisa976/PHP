@@ -12,7 +12,7 @@ if(isset($_POST["btnLogin"]))
             mysqli_set_charset($conexion,"utf8");
         }catch(Exception $e){
             session_destroy();
-            die(error_page("Práctica 10","<p>No se ha podido conectar a la BD: ".$e->getMessage()."</p>"));
+            die(error_page("Páctica 10B","<p>No se ha podido conectar a la BD: ".$e->getMessage()."</p>"));
         }
         // Me he conectado y ahora hago la consulta
         try{
@@ -35,7 +35,7 @@ if(isset($_POST["btnLogin"]))
         }catch(Exception $e){
             mysqli_close($conexion);
             session_destroy();
-            die(error_page("Práctica 10","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+            die(error_page("Páctica 10B","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
         }
     }
 }
@@ -46,11 +46,11 @@ if(isset($_POST["btnLogin"]))
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Práctica 10</title>
+    <title>Páctica 10B</title>
     <link rel="stylesheet" href="src/style.css">
 </head>
 <body>
-    <h1>Práctica 10</h1>
+    <h1>Páctica 10B</h1>
     <form action="index.php" method="post">
         <p>
             <label for="usuario">Usuario: </label>

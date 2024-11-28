@@ -1,11 +1,12 @@
 <?php
-try {
+//la conexión ya se hace en seguridad
+/*try {
     @$conexion = mysqli_connect(SERVIDOR_BD, USUARIO_BD, CLAVE_BD, NOMBRE_BD);
     mysqli_set_charset($conexion, "utf8");
 } catch (Exception $e) {
     session_destroy();
     die(error_page("Práctica 10", "<p>No se ha podido conectar a la BD: " . $e->getMessage() . "</p>"));
-}
+}*/
 
 if (isset($_POST["btnAgregar"])) {
     try {
@@ -48,7 +49,12 @@ if (isset($_SESSION["profesor"])) {
     $_POST["hora"] = $_SESSION["hora"];
     $_POST["profesor"] = $_SESSION["profesor"];
     $mensaje_accion = $_SESSION["mensaje_accion"];
-    session_destroy();
+    //session_destroy();
+    unset($_SESSION["dia"]);
+    unset($_SESSION["hora"]);
+    unset($_SESSION["profesor"]);
+    unset($_SESSION["mensaje_accion"]);
+
 }
 
 

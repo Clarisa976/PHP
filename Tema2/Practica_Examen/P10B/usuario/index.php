@@ -4,7 +4,7 @@
     mysqli_set_charset($conexion, "utf8");
 } catch (Exception $e) {
     session_destroy();
-    die(error_page("Práctica 10", "<p>No se ha podido conectar a la BD: " . $e->getMessage() . "</p>"));
+    die(error_page("Práctica 10B", "<p>No se ha podido conectar a la BD: " . $e->getMessage() . "</p>"));
 }*/
 if (!isset($_POST["profesor"])) {
     $_POST["profesor"] = $datos_usuario_log["id_usuario"];
@@ -27,7 +27,7 @@ try {
 } catch (Exception $e) {
     session_destroy();
     mysqli_close($conexion);
-    die(error_page("Práctica 10", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+    die(error_page("Práctica 10B", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
 }
 
 if (isset($_POST["profesor"])) {
@@ -37,7 +37,7 @@ if (isset($_POST["profesor"])) {
     } catch (Exception $e) {
         session_destroy();
         mysqli_close($conexion);
-        die(error_page("Práctica 10", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+        die(error_page("Práctica 10B", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
     }
 
 
@@ -57,7 +57,7 @@ if (isset($_POST["dia"])) {
     } catch (Exception $e) {
         session_destroy();
         mysqli_close($conexion);
-        die(error_page("Práctica 10", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+        die(error_page("Práctica 10B", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
     }
 
     try {
@@ -66,7 +66,7 @@ if (isset($_POST["dia"])) {
     } catch (Exception $e) {
         session_destroy();
         mysqli_close($conexion);
-        die(error_page("Práctica 10", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+        die(error_page("Práctica 10B", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
     }
 }
 ?><!DOCTYPE html>
@@ -74,7 +74,7 @@ if (isset($_POST["dia"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Práctica 10</title>
+    <title>Práctica 10B</title>
     <style>
         .centrado {
             text-align: center
@@ -111,7 +111,7 @@ if (isset($_POST["dia"])) {
     </style>
 </head>
 <body>
-    <h1>Práctica 10</h1>
+    <h1>Práctica 10B</h1>
     <?php
         if(isset($_SESSION["mensaje_accion"])){
             echo "<p class='mensaje'>".$_SESSION["mensaje_accion"]."</p>";

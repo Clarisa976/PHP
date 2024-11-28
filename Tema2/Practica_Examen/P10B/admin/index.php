@@ -1,22 +1,118 @@
 <?php
-/*try {
-    @$conexion = mysqli_connect(SERVIDOR_BD, USUARIO_BD, CLAVE_BD, NOMBRE_BD);
-    mysqli_set_charset($conexion, "utf8");
-} catch (Exception $e) {
-    session_destroy();
-    die(error_page("Práctica 10", "<p>No se ha podido conectar a la BD: " . $e->getMessage() . "</p>"));
-}*/
-if (!isset($_POST["profesor"])) {
-    $_POST["profesor"] = $datos_usuario_log["id_usuario"];
+session_name("P10B2");
+session_start();
+require "../src/funciones_ctes.php";
+
+if (isset($_SESSION["usuario"])){
+
+    try
+    {
+        @$conexion=mysqli_connect(SERVIDOR_BD,USUARIO_BD,CLAVE_BD,NOMBRE_BD);
+        mysqli_set_charset($conexion,"utf8");
+    }
+    catch(Exception $e)
+    {
+        session_destroy();
+        die(error_page("Práctica 10B","<p>No se ha podido conectar a la BD: ".$e->getMessage()."</p>"));
+    }
+    
+    //usamos los datos cogidos de la sesión para la consulta
+    try
+    {
+        $consulta="select * from usuarios where usuario='".$_SESSION["usuario"]."' AND clave='".$_SESSION["clave"]."'";
+        $result_select=mysqli_query($conexion,$consulta);
+        
+    }
+    catch(Exception $e)
+    {
+        mysqli_close($conexion);
+        session_destroy();    
+        die(error_page("Práctica 10B","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+    }
+    //
+    if(mysqli_num_rows($result_select)<=0){
+        mysqli_free_result($result_select);
+        session_unset();//deslogueo
+        $_SESSION["mensaje_seguridad"]="Usted ya no se encuentra registrado en la BD";
+        header("Location:../index.php");
+        exit;
+    }else{
+        $datos_usuario_log=mysqli_fetch_assoc($result_select);
+        mysqli_free_result($result_select);
+    }
+    
+    // He pasado el control de baneo
+    //Ahora controlo el tiempo de inactividad
+    if(time()-$_SESSION["ultm_accion"]>INACTIVIDAD*60){
+        session_unset();
+        $_SESSION["mensaje_seguridad"]="Su tiempo de sesión ha expirado. Por favor, vuelva a loguearse";
+        header("Location:../index.php");
+        exit;
+    }
+    
+    $_SESSION["ultm_accion"]=time();
+
+    //acaba la seguridad
+
+    if($datos_usuario_log["tipo"]=="admin"){
+        require "index.php";
+    }else{
+        header("Location:../index.php");
+        exit;
+    }
+    
+}else{
+    header("Location:../index.php");
 }
 
+
+if (isset($_POST["btnAgregar"])) {
+    try {
+        $consulta = "insert into horario_lectivo (usuario, dia, hora, grupo) values('" . $_POST["profesor"] . "','" . $_POST["dia"] . "','" . $_POST["hora"] . "','" . $_POST["grupo"] . "')";
+        mysqli_query($conexion, $consulta);
+    } catch (Exception $e) {
+        session_destroy();
+        mysqli_close($conexion);
+        die(error_page("Pŕactica 10B", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+    }
+
+    $_SESSION["mensaje_accion"] = "Grupo insertado con éxito";
+    $_SESSION["profesor"] = $_POST["profesor"];
+    $_SESSION["dia"] = $_POST["dia"];
+    $_SESSION["hora"] = $_POST["hora"];
+    header("Location:index.php");
+    exit;
+}
+
+if (isset($_POST["btnQuitar"])) {
+    try {
+        $consulta = "delete from horario_lectivo where id_horario='" . $_POST["btnQuitar"] . "'";
+        mysqli_query($conexion, $consulta);
+    } catch (Exception $e) {
+        session_destroy();
+        mysqli_close($conexion);
+        die(error_page("Pŕactica 10B", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+    }
+
+    $_SESSION["mensaje_accion"] = "Grupo borrado con éxito";
+    $_SESSION["profesor"] = $_POST["profesor"];
+    $_SESSION["dia"] = $_POST["dia"];
+    $_SESSION["hora"] = $_POST["hora"];
+    header("Location:index.php");
+    exit;
+}
 
 if (isset($_SESSION["profesor"])) {
     $_POST["dia"] = $_SESSION["dia"];
     $_POST["hora"] = $_SESSION["hora"];
     $_POST["profesor"] = $_SESSION["profesor"];
     $mensaje_accion = $_SESSION["mensaje_accion"];
-    session_destroy();
+    //session_destroy();
+    unset($_SESSION["dia"]);
+    unset($_SESSION["hora"]);
+    unset($_SESSION["profesor"]);
+    unset($_SESSION["mensaje_accion"]);
+
 }
 
 
@@ -27,7 +123,7 @@ try {
 } catch (Exception $e) {
     session_destroy();
     mysqli_close($conexion);
-    die(error_page("Práctica 10", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+    die(error_page("Pŕactica 10B", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
 }
 
 if (isset($_POST["profesor"])) {
@@ -37,7 +133,7 @@ if (isset($_POST["profesor"])) {
     } catch (Exception $e) {
         session_destroy();
         mysqli_close($conexion);
-        die(error_page("Práctica 10", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+        die(error_page("Pŕactica 10B", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
     }
 
 
@@ -57,7 +153,7 @@ if (isset($_POST["dia"])) {
     } catch (Exception $e) {
         session_destroy();
         mysqli_close($conexion);
-        die(error_page("Práctica 10", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+        die(error_page("Pŕactica 10B", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
     }
 
     try {
@@ -66,15 +162,19 @@ if (isset($_POST["dia"])) {
     } catch (Exception $e) {
         session_destroy();
         mysqli_close($conexion);
-        die(error_page("Práctica 10", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
+        die(error_page("Pŕactica 10B", "<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p>"));
     }
 }
-?><!DOCTYPE html>
+?>
+
+<!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Práctica 10</title>
+    <title>Pŕactica 10B</title>
     <style>
         .centrado {
             text-align: center
@@ -110,19 +210,34 @@ if (isset($_POST["dia"])) {
         }
     </style>
 </head>
+
 <body>
-    <h1>Práctica 10</h1>
-    <?php
-        if(isset($_SESSION["mensaje_accion"])){
-            echo "<p class='mensaje'>".$_SESSION["mensaje_accion"]."</p>";
-        }
-    ?>
+    <h1>Pŕactica 10B</h1>
     <div>
-        <form class="enlinea" action="index.php" method="post">Bienvenido <strong><?php echo $datos_usuario_log["usuario"];?></strong> - <button class="enlace" type="submit" name="btnCerrarSession">Salir</button></form>
+        <form class="enlinea" action="index.php" method="post">Bienvenido <strong><?php echo $datos_usuario_log["usuario"]; ?></strong> - <button class="enlace" type="submit" name="btnCerrarSession">Salir</button></form>
     </div>
+    <h2>Horario de los Profesores</h2>
+    <form action="index.php" method="post">
+        <p>
+            <label for="profesor">Horario del Profesor: </label>
+            <select name="profesor" id="profesor">
+                <?php
+                while ($tupla = mysqli_fetch_assoc($result_profesores)) {
+                    if (isset($_POST["profesor"]) && $_POST["profesor"] == $tupla["id_usuario"]) {
+                        echo "<option selected value='" . $tupla["id_usuario"] . "'>" . $tupla["nombre"] . "</option>";
+                        $nombre_profesor = $tupla["nombre"];
+                    } else
+                        echo "<option value='" . $tupla["id_usuario"] . "'>" . $tupla["nombre"] . "</option>";
+                }
+                mysqli_free_result($result_profesores);
+                ?>
+            </select>
+            <button type="submit" name="btnVerHorario">Ver Horario</button>
+        </p>
+    </form>
     <?php
     if (isset($_POST["profesor"])) {
-        echo "<h3 class='centrado'>Horario del Profesor:" . $datos_usuario_log["usuario"] . "</h3>";
+        echo "<h3 class='centrado'>Horario del Profesor:" . $nombre_profesor . "</h3>";
         echo "<table class='centrado'>";
         echo "<tr>";
         echo "<th></th>";
@@ -145,7 +260,7 @@ if (isset($_POST["dia"])) {
                     echo "<input type='hidden' name='dia' value='" . $dia . "'/>";
                     echo "<input type='hidden' name='hora' value='" . $hora . "'/>";
                     echo "<input type='hidden' name='profesor' value='" . $_POST["profesor"] . "'/>";
-                    //echo "<button class='enlace' name='btnEditar' type='submit'>Editar</button>";
+                    echo "<button class='enlace' name='btnEditar' type='submit'>Editar</button>";
                     echo "</form>";
                     echo "</td>";
                 }
@@ -175,7 +290,7 @@ if (isset($_POST["dia"])) {
                 echo "<input type='hidden' name='dia' value='" . $_POST["dia"] . "'/>";
                 echo "<input type='hidden' name='hora' value='" . $_POST["hora"] . "'/>";
                 echo "<input type='hidden' name='profesor' value='" . $_POST["profesor"] . "'/>";
-                //echo "<button name='btnQuitar' class='enlace' value='" . $tupla["id_horario"] . "' type='submit'>Quitar</button>";
+                echo "<button name='btnQuitar' class='enlace' value='" . $tupla["id_horario"] . "' type='submit'>Quitar</button>";
                 echo "</form>";
                 echo "</td>";
                 echo "</tr>";
@@ -193,12 +308,12 @@ if (isset($_POST["dia"])) {
                 echo "<option value='" . $tupla["id_grupo"] . "'>" . $tupla["nombre"] . "</option>";
             }
             echo "</select>";
-            //echo "<button type='submit' name='btnAgregar'>Añadir</button>";
+            echo "<button type='submit' name='btnAgregar'>Añadir</button>";
             echo "</p>";
             echo "</form>";
         }
     }
     ?>
-
 </body>
+
 </html>
