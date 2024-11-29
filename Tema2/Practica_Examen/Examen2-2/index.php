@@ -22,12 +22,24 @@ try {
     die("<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p></body></html>");
 }
 
+if(isset($_POST["alumno"])) {
+    try {
+        $consulta = "SELECT notas.cod_asig,denominacion,notas FROM notas,asignaturas WHERE notas.cod_asig=asignaturas.cod_asig AND cod_alu='".$_POST["alumno"]."'";
+        $resultado_notas_alumno = mysqli_query($conexion, $consulta);
+    } catch (Exception $e) {
+        mysqli_close($conexion);
+        die("<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p></body></html>");
+    }
+}
+
 if (mysqli_num_rows($resultado) <= 0) {
     echo "<p>En estos momentos no tenemos ningún alumno registrado en la BD</p>";
 
-    mysqli_free_result($resultado);
-    mysqli_close($conexion);
-}
+   // mysqli_free_result($resultado);
+    //mysqli_close($conexion);
+}else{
+
+
 
 ?>
 <!DOCTYPE html>
@@ -89,6 +101,7 @@ if (mysqli_num_rows($resultado) <= 0) {
                         echo "<option value='" . $tupla["cod_alu"] . "'>" . $tupla["nombre"] . "</option>";
                     }
                 }
+                mysqli_free_result($resultado);
                 ?>
             </select>
             <button type="submit" name="btnVerNotas">Ver notas</button>
@@ -99,9 +112,12 @@ if (mysqli_num_rows($resultado) <= 0) {
         $cod_alu=$_POST["alumno"];
         echo "<h2>Notas del alumno ".$nombre_alumno."</h2>";
 
-        //consulta para obtener las notas del alumno
+        //tabla de notas
         
     }
+
+
+}
     ?>
 </body>
 
