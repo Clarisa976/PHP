@@ -28,7 +28,7 @@ try {
     die(error_page("Examen2 PHP", "<p>La conexión ha fallado: " . $e->getMessage() . "</p>"));
 }
 
-if (isset($_POST["alumno"])) {
+if (isset($_POST["btnVerNotas"])) {
     //consulta para traer las cosas de la tabla
     try {
         $consulta = "select notas.cod_asig,denominacion,nota from notas,asignaturas where notas.cod_asig=asignaturas.cod_asig and cod_alu='" . $_POST["alumno"] . "'";
@@ -52,14 +52,17 @@ if (isset($_POST["btnBorrar"])) {
         die(error_page("Examen2 PHP", "<p>La conexión ha fallado: " . $e->getMessage() . "</p>"));
     }
     $_SESSION["mensaje"] = "nota borrada con éxito";
-    try {
+    $_SESSION["alumno"]=$_POST["alumno"];
+    header("Location:index.php");
+    exit;
+    /*try {
         $consulta = "select notas.cod_asig,denominacion,nota from notas,asignaturas where notas.cod_asig=asignaturas.cod_asig and cod_alu='" . $_POST["alumno"] . "'";
         $resultado_notas = mysqli_query($conexion, $consulta);
     } catch (Exception $e) {
         session_destroy();
         mysqli_close($conexion);
         die(error_page("Examen2 PHP", "<p>La conexión ha fallado: " . $e->getMessage() . "</p>"));
-    }
+    }*/
 }
 
 
