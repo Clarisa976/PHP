@@ -5,38 +5,63 @@ if(isset($_POST["btnLogin"]))
     $error_usuario=$_POST["usuario"]=="";
     $error_clave=$_POST["clave"]=="";
     $error_form_login=$error_usuario || $error_clave;
-    if(!$error_form_login){
+    if(!$error_form_login)
+    {
+
         //consulta a la BD y si está inicio sesión y salto a index
         try{
-            @$conexion=mysqli_connect(SERVIDOR_BD,USUARIO_BD,CLAVE_BD,NOMBRE_BD);
-            mysqli_set_charset($conexion,"utf8");
-        }catch(Exception $e){
-            session_destroy();
-            die(error_page("Práctica 10","<p>No se ha podido conectar a la BD: ".$e->getMessage()."</p>"));
+            $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
         }
+        catch(PDOException $e)
+        {
+            session_destroy();
+            die(error_page("Primer Login b","<p>No se ha podido conectar a la BD: ".$e->getMessage()."</p>"));
+        }
+
         // Me he conectado y ahora hago la consulta
-        try{
-            $consulta="select usuario from usuarios where usuario='".$_POST["usuario"]."' AND clave='".md5($_POST["clave"])."'";
-            $result_select=mysqli_query($conexion,$consulta);
-            $n_tuplas=mysqli_num_rows($result_select);
-            mysqli_free_result(($result_select));
-            if($n_tuplas>0){
+        try
+        {
+            $consulta="select tipo from usuarios where usuario=? AND clave=?";
+         
+            $sentencia=$conexion->prepare($consulta);
+            $sentencia->execute([$_POST["usuario"],md5($_POST["clave"])]);
+            if($sentencia->rowCount()>0)
+            {
                 //El usuario se encuentra registrado y tengo que iniciar session
-                mysqli_close($conexion);
+                $tupla=$sentencia->fetch(PDO::FETCH_ASSOC);
+                $sentencia=null;
+                $conexion=null;
                 $_SESSION["usuario"]=$_POST["usuario"];
                 $_SESSION["clave"]=md5($_POST["clave"]);
                 $_SESSION["ultm_accion"]=time();
-                header("Location:index.php");
+                if($tupla["tipo"]=="normal")
+                    header("Location:index.php");
+                else
+                    header("Location:admin/index.php");
                 exit;
 
-            }else
+            }
+            else
+            {
+                $sentencia=null;
+                $conexion=null;
                 $error_usuario=true;
+            }
 
-        }catch(Exception $e){
-            mysqli_close($conexion);
-            session_destroy();
-            die(error_page("Práctica 10","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
         }
+        catch(PDOException $e)
+        {
+            $sentencia=null;
+            $conexion=null;
+            session_destroy();
+            die(error_page("Primer Login b","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+        }
+
+
+
+        
+       
+
     }
 }
 
@@ -46,17 +71,21 @@ if(isset($_POST["btnLogin"]))
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Práctica 10</title>
-    <link rel="stylesheet" href="src/style.css">
+    <title>Primer Login b</title>
+    <style>
+        .error{color:red}
+        .mensaje{color:blue;font-size:1.25rem}
+    </style>
 </head>
 <body>
-    <h1>Práctica 10</h1>
+    <h1>Primer Login b</h1>
     <form action="index.php" method="post">
         <p>
             <label for="usuario">Usuario: </label>
             <input type="text" id="usuario" name="usuario" value="<?php if(isset($_POST["usuario"])) echo $_POST["usuario"];?>"/>
             <?php
-            if(isset($_POST["btnLogin"]) && $error_usuario){
+            if(isset($_POST["btnLogin"]) && $error_usuario)
+            {
                 if($_POST["usuario"]=="")
                     echo "<span class='error'>* Campo vacío *</span>";
                 else
@@ -74,10 +103,7 @@ if(isset($_POST["btnLogin"]))
             }
             ?>
         </p>
-        <p>
-            <button name="btnLogin" type="submit">Login</button>
-            
-    </p>
+        <p><button name="btnLogin" type="submit">Login</button></p>
     </form>
     <?php
     if(isset($_SESSION["mensaje_seguridad"]))

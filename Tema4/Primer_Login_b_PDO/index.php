@@ -1,10 +1,7 @@
 <?php
-session_name("P10");
+session_name("Primer_login_b_24_25");
 session_start();
 require "src/funciones_ctes.php";
-
-
-
 
 if(isset($_POST["btnCerrarSession"]))
 {
@@ -17,20 +14,25 @@ if(isset($_SESSION["usuario"]))
 {
     //Control de baneo  
     //consulta a la BD y si está inicio sesión y salto a index
+    $salto="index.php";
     require "src/seguridad.php";
 
     // Muestro vista después de Login
-    if($datos_usuario_log["tipo"]=="normal"){
-        require "vistas/vista_usuario.php";
-    }else{
-        require "vistas/vista_admin.php";
+    if($datos_usuario_log["tipo"]=="normal")
+        require "vistas/vista_normal.php";
+    else
+    {
+        $conexion=null;
+        header("Location:admin/index.php");
+        exit;
+    }
+        
 
-    }mysqli_close($conexion);
-   
-}else{
+    $conexion=null;
+}
+else
+{
     require "vistas/vista_login.php";
 }
 
- 
 
-?>
