@@ -1,5 +1,5 @@
 <?php
-session_name("examen2_24_25");
+session_name("examen2_24_25_PDO");
 session_start();
 
 require "src/funciones_ctes.php";
