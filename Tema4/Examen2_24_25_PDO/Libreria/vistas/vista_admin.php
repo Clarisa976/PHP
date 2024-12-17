@@ -24,7 +24,7 @@ if(isset($_POST["btnAgregar"]))
         {
             session_destroy();
             $conexion=null;
-            die(error_page("Examen2 Php","<p>No se ha podido realizar la consulta: ".$error_referencia."</p>"));
+            die(error_page("Examen 2 PDO","<p>No se ha podido conectar a la BD: ".$e->getMessage()."</p>"));
         }
     }
     $error_titulo=$_POST["titulo"]=="";
@@ -39,13 +39,16 @@ if(isset($_POST["btnAgregar"]))
     {
 
         try{
-            $consulta="insert into libros (referencia, titulo, autor, descripcion, precio) values ('".$_POST["referencia"]."','".$_POST["titulo"]."','".$_POST["autor"]."','".$_POST["descripcion"]."','".$_POST["precio"]."')";
-            mysqli_query($conexion,$consulta);
+            $consulta="insert into libros (referencia, titulo, autor, descripcion, precio) values (?,?,?,?,?)";
+            $sentencia=$conexion->prepare($consulta);
+            $sentencia->execute([$_POST["referencia"],$_POST["titulo"],$_POST["autor"],$_POST["descripcion"],$_POST["precio"]]);
+            $sentencia=null;
         }
-        catch(Exception $e){
+        catch(PDOException $e){
             session_destroy();
-            mysqli_close($conexion);
-            die(error_page("Examen2 Php","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+            $sentencia=null;
+            $conexion=null;
+            die(error_page("Examen 2 PDO","<p>No se ha podido conectar a la BD: ".$e->getMessage()."</p>"));
         }
         $_SESSION["mensaje_accion"]="Libro agregado con éxito";
 
@@ -57,18 +60,21 @@ if(isset($_POST["btnAgregar"]))
             if($var)
             {
                 try{
-                    $consulta="update libros set portada='".$nombre_portada."' where referencia='".$_POST["referencia"]."'";
-                    mysqli_query($conexion,$consulta);
+                    $consulta="update libros set portada=? where referencia=?";
+                    $sentencia=$conexion->prepare($consulta);
+                    $sentencia->execute([$nombre_portada,$_POST["referencia"]]);
+                    $sentencia=null;
                 }
-                catch(Exception $e){
+                catch(PDOException $e){
                     unlink("../Images/".$nombre_portada);
-                    $_SESSION["mensaje_accion"]="Libro agregado con éxito pero con la imagen por defecto";
+                    $_SESSION["mensaje_accion"]="Libro agregado con éxito pero con la imagen por defecto por un error en la consulta de actualización en la BD.";
                 }
             }
             else
-                $_SESSION["mensaje_accion"]="Libro agregado con éxito pero con la imagen por defecto";
+                $_SESSION["mensaje_accion"]="Libro agregado con éxito pero con la imagen por defecto por no poder mover la imagen subida a la carpeta destino.";
 
         }
+        $conexion=null;
         header("location:gest_libros.php");
         exit;
     }
@@ -77,12 +83,16 @@ if(isset($_POST["btnAgregar"]))
 
 try{
     $consulta="select * from libros";
-    $result_libros=mysqli_query($conexion,$consulta);
+    $sentencia=$conexion->prepare($consulta);
+    $sentencia->execute();
+    $libros=$sentencia->fetchAll(PDO::FETCH_ASSOC);
+    $sentencia=null;
 }
-catch(Exception $e){
+catch(PDOException $e){
+    $sentencia=null;
+    $conexion=null;
     session_destroy();
-    mysqli_close($conexion);
-    die(error_page("Examen2 Php","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+    die(error_page("Examen 2 PDO","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
 }
 ?>
 <!DOCTYPE html>
@@ -90,7 +100,7 @@ catch(Exception $e){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Examen2 Php</title>
+    <title>Examen 2 PDO</title>
     <style>
         .enlinea{display:inline}
         .enlace{background:none;border:none;color:blue;text-decoration: underline;cursor: pointer;}
@@ -117,7 +127,7 @@ catch(Exception $e){
     <?php
     echo "<table>";
     echo "<tr><th>Ref</th><th>Título</th><th>Acción</th></tr>";
-    while($tupla=mysqli_fetch_assoc($result_libros))
+    foreach($libros as $tupla)
     {
         echo "<tr>";
         echo "<td>".$tupla["referencia"]."</td>";
@@ -131,7 +141,6 @@ catch(Exception $e){
         echo "</tr>";
     }
     echo "</table>";
-    mysqli_free_result($result_libros);
     ?>
     <h2>Agregar un libro</h2>
     <form action="gest_libros.php" method="post" enctype="multipart/form-data">

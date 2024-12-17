@@ -24,13 +24,15 @@ function repetido($conexion,$tabla,$columna,$valor,$columna_clave=null,$valor_cl
     try
     {
         if(isset($columna_clave))
-            $consulta="select ".$columna." from ".$tabla." where ".$columna."='".$valor."' AND ".$columna_clave."<>'".$valor_clave."'";
+            $consulta="select ".$columna." from ".$tabla." where ".$columna."=? AND ".$columna_clave."<>'".$valor_clave."'";
         else
-            $consulta="select ".$columna." from ".$tabla." where ".$columna."='".$valor."'";
+            $consulta="select ".$columna." from ".$tabla." where ".$columna."=?";
 
             
-        $usuario_repetido=mysqli_query($conexion,$consulta);
-        $respuesta=mysqli_num_rows($usuario_repetido)>0;
+        $usuario_repetido=$conexion->prepare($consulta);
+        $usuario_repetido->execute([$valor]);
+        $respuesta=$usuario_repetido->rowCount()>0;
+        $usuario_repetido=null;
     }
     catch(Exception $e)
     {

@@ -18,12 +18,13 @@ function error_page($title,$body)
 function repetido($conexion, $tabla, $columna, $valor)
 {
     try{
-        $consulta="select ".$columna." from ".$tabla." where ".$columna."='".$valor."'";
-        $result_consulta=mysqli_query($conexion,$consulta);
-        $respuesta= mysqli_num_rows($result_consulta)>0;
-        mysqli_free_result($result_consulta);
+        $consulta="select ".$columna." from ".$tabla." where ".$columna."=?";
+        $sentencia=$conexion->prepare($consulta);
+        $sentencia->execute([$valor]);
+        $respuesta= $sentencia->rowCount()>0;
+        $sentencia=null;
     }
-    catch(Exception $e){
+    catch(PDOException $e){
         $respuesta=$e->getMessage();
     }
 

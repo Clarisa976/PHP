@@ -1,12 +1,16 @@
 <?php
 try{
     $consulta="select * from libros";
-    $result_libros=mysqli_query($conexion,$consulta);
+    $sentencia=$conexion->prepare($consulta);
+    $sentencia->execute();
+    $libros=$sentencia->fetchAll(PDO::FETCH_ASSOC);
+    $sentencia=null;
 }
-catch(Exception $e){
+catch(PDOException $e){
+    $sentencia=null;
+    $conexion=null;
     session_destroy();
-    mysqli_close($conexion);
-    die(error_page("Examen2 Php","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+    die(error_page("Examen 2 PDO","<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
 }
 
 ?>
@@ -15,7 +19,7 @@ catch(Exception $e){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Examen2 Php</title>
+    <title>Examen 2 PDO</title>
     <style>
         .enlinea{display:inline}
         .enlace{background:none;border:none;color:blue;text-decoration: underline;cursor: pointer;}
