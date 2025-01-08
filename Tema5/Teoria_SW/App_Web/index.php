@@ -69,6 +69,10 @@
     echo "<p>El mensaje recibido tras llamar al servicio web: <strong>'".$url."'</strong> ha sido: ".$obj->mensaje."</p>";
 
 
+
+
+    
+
     ?>
 </body>
 </html>
