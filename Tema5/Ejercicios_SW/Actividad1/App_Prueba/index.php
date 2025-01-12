@@ -27,25 +27,44 @@ define("DIR_SERV", "http://localhost/Proyectos/PHP/Tema5/Ejercicios_SW/Actividad
 <body>
     <h1>Productos de la tienda</h1>
     <?php
-        $url=DIR_SERV."/productos";
-        $respuesta=consumir_servicios_REST($url,"GET");
-        $obj=json_decode($respuesta,true);
-        if(!$obj){
-            die("<p>Error consumiendo el servicio web <strong>".$url."</strong></p></body></html>");
-        }
-        if(isset($obj["error"])){
-            die("<p>".$obj["error"]."</p></body></html>");
-        }
-        //si hay productos los mostramos en una tabla
-        echo "<table>";
-        echo "<tr><th>Código</th><th>Nombre corto</th><th>Precio</th></tr>";
-        foreach ($obj["productos"] as $tupla) {
-            echo "<tr>";
-            echo "<td>".$tupla["cod"]."</td>";
-            echo "<td>".$tupla["nombre_corto"]."</td>";
-            echo "<td>".$tupla["PVP"]."</td>";
-            echo "</tr>";
-            /*
+    $datos["codigo"] = "ABCDEFG";
+    $datos["nombre"] = "nose";
+    $datos["nombre_corto"] = "ns";
+    $datos["descripcion"] = "fdsafafafa";
+    $datos["PVP"] = 3.4;
+    $datos["familia"] = "Consolas";
+
+    $url1 = DIR_SERV . "/producto/insertar";
+    $respuesta = consumir_servicios_REST($url1, "POST", $datos);
+    $obj = json_decode($respuesta);
+    if (!$obj)
+        die("<p>Error consumiendo el servicio: " . $url1 . "</p>" . $respuesta);
+
+    if (isset($obj->error))
+        die("<p>" . $obj->error . "</p></body></html>");
+
+    echo "<p>" . $obj->mensaje . "</p>";
+
+
+    $url = DIR_SERV . "/productos";
+    $respuesta = consumir_servicios_REST($url, "GET");
+    $obj = json_decode($respuesta, true);
+    if (!$obj) {
+        die("<p>Error consumiendo el servicio web <strong>" . $url . "</strong></p></body></html>");
+    }
+    if (isset($obj["error"])) {
+        die("<p>" . $obj["error"] . "</p></body></html>");
+    }
+    //si hay productos los mostramos en una tabla
+    echo "<table>";
+    echo "<tr><th>Código</th><th>Nombre corto</th><th>Precio</th></tr>";
+    foreach ($obj["productos"] as $tupla) {
+        echo "<tr>";
+        echo "<td>" . $tupla["cod"] . "</td>";
+        echo "<td>" . $tupla["nombre_corto"] . "</td>";
+        echo "<td>" . $tupla["PVP"] . "</td>";
+        echo "</tr>";
+        /*
              foreach ($obj->productos as $tupla) {
             echo "<tr>";
             echo "<td>".$tupla->cod."</td>";
@@ -53,8 +72,8 @@ define("DIR_SERV", "http://localhost/Proyectos/PHP/Tema5/Ejercicios_SW/Actividad
             echo "<td>".$tupla->PVP."</td>";
             echo "</tr>";
             */
-        }
-        echo "</table>";
+    }
+    echo "</table>";
     ?>
 </body>
 

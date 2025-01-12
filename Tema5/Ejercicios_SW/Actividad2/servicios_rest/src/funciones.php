@@ -6,7 +6,6 @@ define("CLAVE_BD", "josefa");
 define("NOMBRE_BD", "bd_tienda");
 
 
-
 $app = new \Slim\App;
 //método para obtener todos los productos
 function obtener_productos()
@@ -137,7 +136,8 @@ function actualizar_producto($datos)
 }
 
 //método para borrar un producto mediante su código
-function borrar_producto($codigo){
+function borrar_producto($codigo)
+{
     //primero se conecta a la base de datos
     try {
         @$conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
@@ -169,7 +169,8 @@ function borrar_producto($codigo){
 }
 
 //método para obtener las familias
-function obtener_familias() {
+function obtener_familias()
+{
     //primero se conecta a la base de datos
     try {
         @$conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
@@ -197,7 +198,8 @@ function obtener_familias() {
 }
 
 //método para comprobar los repetidos a la hora de insertar
-function repetidos_insertar($tabla,$columna,$valor) {
+function repetidos_insertar($tabla, $columna, $valor)
+{
     //primero se conecta a la base de datos
     try {
         @$conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
@@ -225,7 +227,8 @@ function repetidos_insertar($tabla,$columna,$valor) {
 }
 
 //método para comprobar los repetidos a la hora de actualizar
-function repetidos_actualizar($tabla,$columna,$valor, $columna_id, $valor_id) {
+function repetidos_actualizar($tabla, $columna, $valor, $columna_id, $valor_id)
+{
     //primero se conecta a la base de datos
     try {
         @$conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
