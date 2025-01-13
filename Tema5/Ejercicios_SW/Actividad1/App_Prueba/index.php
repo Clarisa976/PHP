@@ -27,12 +27,12 @@ define("DIR_SERV", "http://localhost/Proyectos/PHP/Tema5/Ejercicios_SW/Actividad
 <body>
     <h1>Productos de la tienda</h1>
     <?php
-    $datos["codigo"] = "ABCDEFG";
+    $datos["cod"] = "EFGABCD";
     $datos["nombre"] = "nose";
-    $datos["nombre_corto"] = "ns";
+    $datos["nombre_corto"] = "librito";
     $datos["descripcion"] = "fdsafafafa";
     $datos["PVP"] = 3.4;
-    $datos["familia"] = "Consolas";
+    $datos["familia"] = "EBOOK";
 
     $url1 = DIR_SERV . "/producto/insertar";
     $respuesta = consumir_servicios_REST($url1, "POST", $datos);
