@@ -13,15 +13,15 @@ if (isset($obj->error)) {
     die("<p>" . $obj->error . "</p></body></html>");
 }
 
-foreach ($obj->productos as $tupla) {
+foreach ($json_productos["productos"] as $tupla) {
     echo "
             <tr>
                 <form action='index.php' method='post'>
-                    <td><button class='enlace' type='submit' name='btnDetalles' value='" . $tupla->cod . "'>" . $tupla->cod . "</button></td>
-                    <td>" . $tupla->nombre_corto . "</td>
-                    <td>" . str_replace(".", ",", $tupla->PVP) . "€</td>
-                    <td><button class='enlace' type='submit' name='btnBorrar' value='" . $tupla->cod . "'>Borrar</button> - 
-                    <button class='enlace' type='submit' name='btnEditar' value='" . $tupla->cod . "'>Editar</button></td>
+                    <td><button class='enlace' type='submit' name='btnDetalles' value='" . $tupla["cod"] . "'>" . $tupla["cod"] . "</button></td>
+                    <td>" . $tupla["nombre_corto"] . "</td>
+                    <td>" . str_replace(".", ",", $tupla["PVP"]) . "€</td>
+                    <td><button class='enlace' type='submit' name='btnBorrar' value='" . $tupla["cod"] . "'>Borrar</button> - 
+                    <button class='enlace' type='submit' name='btnEditar' value='" . $tupla["cod"] . "'>Editar</button></td>
                 </form>
             </tr>
             ";
