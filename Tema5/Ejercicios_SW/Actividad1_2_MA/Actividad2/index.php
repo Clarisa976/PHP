@@ -1,275 +1,202 @@
 <?php
-session_name("Actividad2_SW_24_25");
+session_name("Actividad2");
 session_start();
 require "src/funciones_ctes.php";
 
-if(isset($_POST["btnContNuevo"]))
-{
-    $error_cod=$_POST["cod"]=="" || strlen($_POST["cod"])>12;
-    if(!$error_cod)
-    {
+// Errores del formulario
+if(isset($_POST["btnContAgregar"])){
+    // Codigo
+    $error_cod = $_POST["cod"]=="";
+    if(!$error_cod){
+        $url = DIR_SERV . "/repetido/producto/cod/".urlencode($_POST["cod"]);
+        $respuesta = consumir_servicios_REST($url, "GET");
+        $json_repetido = json_decode($respuesta, true);
+        if (!$json_repetido)
+            die("<p> Error consumiendo servicio web <strong>" . $url . "</strong></p></body></html>");
 
-        $url=DIR_SERV."/repetido/producto/cod/".urlencode($_POST["cod"]);
-        $respuesta=consumir_servicios_REST($url,"GET");
-        $json_repetido=json_decode($respuesta,true);
-        if(!$json_repetido)
-            die(error_page("Actividad 2","<p>Error consumiendo el servico rest: <strong>".$url."</strong></p>"));
+        if (isset($json_repetido["error"]))
+            die(error_page("Actividad2", "<p>Error consumiendo el servicio rest: " . $url . "</p>"));
 
-        if(isset($json_repetido["error"]))
-            die(error_page("Actividad 2","<p>".$json_repetido["error"]."</p>"));
+        if (isset($json_repetido["mensaje"]))
+            die(error_page("Actividad 2", "<p>" . $json_repetido["mensaje"] . "</p>"));
 
-        $error_cod=$json_repetido["repetido"];
+        $error_cod = $json_repetido["repetido"];
     }
+    // Nombre corto
+    $error_nombre_corto = $_POST["nombre_corto"]=="";
+    if(!$error_nombre_corto){
+        $url = DIR_SERV . "/repetido/producto/nombre_corto/".urlencode($_POST["nombre_corto"]);
+        $respuesta = consumir_servicios_REST($url, "GET");
+        $json_repetido = json_decode($respuesta, true);
+        if (!$json_repetido)
+            die("<p> Error consumiendo servicio web <strong>" . $url . "</strong></p></body></html>");
 
-    $error_nombre_corto=$_POST["nombre_corto"]=="";
-    if(!$error_nombre_corto)
-    {
-        $url=DIR_SERV."/repetido/producto/nombre_corto/".urlencode($_POST["nombre_corto"]);
-        $respuesta=consumir_servicios_REST($url,"GET");
-        $json_repetido=json_decode($respuesta,true);
-        if(!$json_repetido)
-            die(error_page("Actividad 2","<p>Error consumiendo el servico rest: <strong>".$url."</strong></p>"));
+        if (isset($json_repetido["error"]))
+            die(error_page("Actividad2", "<p>Error consumiendo el servicio rest: " . $url . "</p>"));
 
-        if(isset($json_repetido["error"]))
-            die(error_page("Actividad 2","<p>".$json_repetido["error"]."</p>"));
+        if (isset($json_repetido["mensaje"]))
+            die(error_page("Actividad 2", "<p>" . $json_repetido["mensaje"] . "</p>"));
 
-        $error_nombre_corto=$json_repetido["repetido"];
+        $error_nombre_corto = $json_repetido["repetido"];
     }
-    $error_descripcion=$_POST["descripcion"]=="";
-    $error_PVP=$_POST["PVP"]=="" || !is_numeric($_POST["PVP"]) || $_POST["PVP"]<=0;
+    // Nombre no controla errores
 
-    $error_form=$error_cod || $error_nombre_corto || $error_descripcion || $error_PVP;
+    // Error descripcion
+    $error_descripcion = $_POST["descripcion"]=="";
+    // PVP
+    $error_pvp = $_POST["pvp"]=="" || !is_numeric($_POST["pvp"]) || $_POST["pvp"]<=0;
 
-    if(!$error_form)
-    {
-        //inserto y salto con mensaje
+    $error_form=$error_cod || $error_descripcion || $error_nombre_corto || $error_pvp;
 
-        $url=DIR_SERV."/producto/insertar";
-        $respuesta=consumir_servicios_REST($url,"POST",$_POST);
-        $json_repetido=json_decode($respuesta,true);
-        if(!$json_repetido)
-            die(error_page("Actividad 2","<p>Error consumiendo el servico rest: <strong>".$url."</strong></p>"));
+    if(!$error_form){
+        // Inserto y salgo con mensaje
+        $url = DIR_SERV . "/producto/insertar";
+        $respuesta = consumir_servicios_REST($url, "POST",$_POST);
+        $json_insertar = json_decode($respuesta, true);
+        if (!$json_insertar)
+            die("<p> Error consumiendo servicio web <strong>" . $url . "</strong></p></body></html>");
 
-        if(isset($json_repetido["error"]))
-            die(error_page("Actividad 2","<p>".$json_repetido["error"]."</p>"));
+        if (isset($json_insertar["error"]))
+            die(error_page("Actividad2", "<p>Error consumiendo el servicio rest: " . $url . "</p>"));
 
-        $_SESSION["mensaje"]="¡¡ Producto insertado con éxito !!";
-        header("Location:index.php");
+        $_SESSION["mensaje"]="Producto insertado con éxito";
+        header("location:index.php");
         exit;
+    }else{
 
     }
 
 }
 
+// un producto en concreto
+if (isset($_POST["btnDetalles"])) {
+    $url = DIR_SERV . "/producto/" . $_POST["btnDetalles"] . "";
+    $respuesta = consumir_servicios_REST($url, "GET");
+    $json_detalles = json_decode($respuesta, true);
+    if (!$json_detalles)
+        die("<p> Error consumiendo servicio web <strong>" . $url . "</strong></p></body></html>");
 
+    if (isset($json_detalles["error"]))
+        die(error_page("Actividad2", "<p>Error consumiendo el servicio rest: " . $url . "</p>"));
 
-
-if(isset($_POST["btnDetalles"]))
-{
-    $url=DIR_SERV."/producto/".urlencode($_POST["btnDetalles"]);
-    $respuesta=consumir_servicios_REST($url,"GET");
-    $json_detalles=json_decode($respuesta,true);
-    if(!$json_detalles)
-        die(error_page("Actividad 2","<p>Error consumiendo el servico rest: <strong>".$url."</strong></p>"));
-
-    if(isset($json_detalles["error"]))
-        die(error_page("Actividad 2","<p>".$json_detalles["error"]."</p>"));
+    if (isset($json_detalles["mensaje"]))
+        die(error_page("Actividad 2", "<p>" . $json_detalles["mensaje"] . "</p>"));
 }
 
-if(isset($_POST["btnContBorrar"]))
-{
-    $url=DIR_SERV."/producto/borrar/".urlencode($_POST["btnContBorrar"]);
-    $respuesta=consumir_servicios_REST($url,"DELETE");
-    $json_borrar=json_decode($respuesta,true);
-    if(!$json_borrar)
-        die(error_page("Actividad 2","<p>Error consumiendo el servico rest: <strong>".$url."</strong></p>"));
+// Si pulsamos continuar borrado
+if (isset($_POST["btnContBorrar"])) {
+    $url = DIR_SERV . "/producto/borrar/" . $_POST["btnContBorrar"] . "";
+    $respuesta = consumir_servicios_REST($url, "DELETE");
+    $json_borrar = json_decode($respuesta, true);
+    if (!$json_borrar)
+        die(error_page("Actividad2", "<p>Error consumiendo el servicio rest: " . $url . "</p>"));
 
-    if(isset($json_borrar["error"]))
-        die(error_page("Actividad 2","<p>".$json_borrar["error"]."</p>"));
+    if (isset($json_borrar["error"]))
+        die(error_page("Actividad 2", "<p>" . $json_borrar["error"] . "</p>"));
 
-    $_SESSION["mensaje"]="¡¡ Producto borrado con éxito !!";
+    $_SESSION["mensaje"] = "Se ha eliminado el producto: " . $_POST["btnContBorrar"];
     header("Location:index.php");
     exit;
-        
 }
 
-if(isset($_POST["btnNuevo"])||isset($_POST["btnContNuevo"]))
-{
-    $url=DIR_SERV."/familias";
-    $respuesta=consumir_servicios_REST($url,"GET");
-    $json_familias=json_decode($respuesta,true);
-    if(!$json_familias)
-        die(error_page("Actividad 2","<p>Error consumiendo el servico rest: <strong>".$url."</strong></p>"));
+// Pulsamos boton agregar
+if (isset($_POST["btnAgregar"]) || (isset($_POST["btnContAgregar"]) && $error_form)) {
+    $url = DIR_SERV . "/familias";
+    $respuesta = consumir_servicios_REST($url, "GET");
+    $json_familias = json_decode($respuesta, true);
+    if (!$json_familias)
+        die("<p> Error consumiendo servicio web <strong>" . $url . "</strong></p></body></html>");
 
-    if(isset($json_familias["error"]))
-        die(error_page("Actividad 2","<p>".$json_familias["error"]."</p>"));
+    if (isset($json_familias["error"]))
+        die(error_page("Actividad2", "<p>Error consumiendo el servicio rest: " . $url . "</p>"));
+
+    if (isset($json_familias["mensaje"]))
+        die(error_page("Actividad 2", "<p>" . $json_familias["mensaje"] . "</p>"));
 }
 
-//Esto se va a hacer siempre
-$url=DIR_SERV."/productos";
-$respuesta=consumir_servicios_REST($url,"GET");
-$json_productos=json_decode($respuesta,true);
-if(!$json_productos)
-    die(error_page("Actividad 2","<p>Error consumiendo el servico rest: <strong>".$url."</strong></p>"));
 
-if(isset($json_productos["error"]))
-    die(error_page("Actividad 2","<p>".$json_productos["error"]."</p>"));
+// Listar los productos nada mas iniciar
+$url = DIR_SERV . "/productos";
+$respuesta = consumir_servicios_REST($url, "GET");
+$json_productos = json_decode($respuesta, true);
+if (!$json_productos)
+    die(error_page("Actividad 2", "<p> Error consumiendo el servicio rest:" . $url . "</p>"));
+
+if (isset($json_productos["error"]))
+    die(error_page("Actividad 2", "<p>" . $json_productos["error"] . "</p>"));
+
 
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Actividad 2</title>
     <style>
-        .centrado{width:85%;margin:1em auto}
-        .txt_centrado{text-align:center}
-        table,th,td{border:1px solid black}
-        table{border-collapse:collapse}
-        th{background-color:#CCC}
-        .enlace{border:none;background:none;text-decoration: underline;color:blue;cursor:pointer}
-        .mensaje{font-size:1.25em; color:blue}
-        .error{color:red}
+        .centrado {
+            width: 85%;
+            margin: 0 auto;
+        }
+
+        .txt_centrado {
+            text-align: center;
+        }
+
+        table,
+        td,
+        th {
+            border: 1px solid black;
+            padding: 0.5rem;
+        }
+
+        th {
+            background-color: #CCC;
+        }
+
+        table {
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        .enlace {
+            color: blue;
+            text-decoration: underline;
+            cursor: pointer;
+            background: none;
+            border: none
+        }
     </style>
 </head>
+
 <body>
     <h1 class="centrado txt_centrado">Listado de los productos</h1>
     <?php
 
-    if(isset($_POST["btnDetalles"]))
-    {
-        echo "<div class='centrado'>";
-        echo "<h2>Información del Producto: ".$_POST["btnDetalles"]."</h2>";
-        if(isset($json_detalles["mensaje"]))
-            echo "<p>El producto seleccionado ya no se encuentra en la BD</p>";
-        else
-        {
-            echo "<p>";
-            echo "<strong>Nombre: </strong>".$json_detalles["producto"]["nombre"]."<br/>";
-            echo "<strong>Nombre corto: </strong>".$json_detalles["producto"]["nombre_corto"]."<br/>";
-            echo "<strong>Descripción: </strong>".$json_detalles["producto"]["descripcion"]."<br/>";
-            echo "<strong>PVP: </strong>".$json_detalles["producto"]["PVP"]." €<br/>";
-            echo "<strong>Familia: </strong>".$json_detalles["producto"]["nombre_familia"];
-            echo "</p>";
-        }
-        echo "<form action='index.php' method='post'><button>Volver</button></form>";
-        echo "</div>";
+    // Si existe el botón agregar
+    if(isset($_POST["btnAgregar"]) || (isset($_POST["btnContAgregar"]) && $error_form)){
+        require "vistas/vista_agregar.php";
     }
 
-    if(isset($_POST["btnBorrar"]))
-    {
-        echo "<div class='centrado'>";
-        echo "<p class='txt_centrado'>Se dispone usted a borrar el producto: <strong>".$_POST["btnBorrar"]."</strong></p>";
-        echo "<p class='txt_centrado'>¿ Estás seguro ?</p>";
-        echo "<form action='index.php' method='post'>";
-        echo "<p class='txt_centrado'><button>Cancelar</button><button  name='btnContBorrar' value='".$_POST["btnBorrar"]."' type='submit'>Continuar</button></p>";
-        echo "</form>";
-        echo "</div>";
+    // Si existe botón detalles 
+    if (isset($_POST["btnDetalles"])) {
+        require "vistas/vista_detalles.php";
     }
 
+    // Si existe botón borrar
+    if (isset($_POST["btnBorrar"])) {
+        require "vistas/vista_borrar.php";
+    }
 
-
-    if(isset($_SESSION["mensaje"]))
-    {
-        echo "<p class='centrado txt_centrado mensaje'>".$_SESSION["mensaje"]."</p>";
+    if (isset($_SESSION["mensaje"])) {
+        echo "<p class='txt_centrado centrado'>" . $_SESSION["mensaje"] . "</p>";
         session_destroy();
     }
 
+    require "vistas/vista_tabla.php";
 
-    if(isset($_POST["btnNuevo"]) || (isset($_POST["btnContNuevo"]) && $error_form))
-    {
-    ?>
-        <form class="centrado" action="index.php" method="post">
-            <h2>Creando un producto</h2>
-            <p>
-                <label for="cod">Código:</label>
-                <input type="text" name="cod" id="cod" value="<?php if(isset($_POST["cod"])) echo $_POST["cod"];?>"/>
-                <?php
-                if(isset($_POST["btnContNuevo"]) && $error_cod)
-                {
-                    if($_POST["cod"]=="")
-                        echo "<span class='error'> * Campo vacío *</span>";
-                    elseif(strlen($_POST["cod"])>12)
-                        echo "<span class='error'> * La longitud Máxima del Código debe ser 12*</span>";
-                    else
-                        echo "<span class='error'> * Código repetido *</span>";
-                }
-                ?>
-            </p>
-            <p>
-                <label for="nombre">Nombre:</label>
-                <input type="text" name="nombre" id="nombre" value="<?php if(isset($_POST["nombre"])) echo $_POST["nombre"];?>"/>
-            </p>
-            <p>
-                <label for="nombre_corto">Nombre corto:</label>
-                <input type="text" name="nombre_corto" id="nombre_corto" value="<?php if(isset($_POST["nombre_corto"])) echo $_POST["nombre_corto"];?>"/>
-                <?php
-                if(isset($_POST["btnContNuevo"])&& $error_nombre_corto)
-                {
-                    if($_POST["nombre_corto"]=="")
-                        echo "<span class='error'> * Campo vacío *</span>";
-                    else
-                        echo "<span class='error'> * Código repetido *</span>";
-                }
-                ?>
-            </p>
-            <p>
-                <label for="descripcion">Descripción:</label>
-                <textarea name="descripcion" id="descripcion"><?php if(isset($_POST["descripcion"])) echo $_POST["descripcion"];?></textarea>
-                <?php
-                if(isset($_POST["btnContNuevo"])&& $error_descripcion)
-                    echo "<span class='error'> * Campo vacío *</span>";
-                
-                ?>
-            </p>
-            <p>
-                <label for="PVP">PVP:</label>
-                <input type="text" name="PVP" id="PVP" value="<?php if(isset($_POST["PVP"])) echo $_POST["PVP"];?>"/>
-                <?php
-                if(isset($_POST["btnContNuevo"])&& $error_PVP)
-                {
-                    if($_POST["PVP"]=="")
-                        echo "<span class='error'> * Campo vacío *</span>";
-                    else
-                        echo "<span class='error'> * Valor incorrecto para PVP *</span>";
-                }
-                ?>
-            </p>
-            <p>
-                <label for="familia">Seleccione una familia:</label>
-                <select name="familia" id="familia">
-                <?php
-                foreach($json_familias["familias"] as $tupla)
-                {
-                    if(isset($_POST["familia"])&& $_POST["familia"]==$tupla["cod"])
-                        echo "<option selected value='".$tupla["cod"]."'>".$tupla["nombre"]."</option>";
-                    else
-                        echo "<option value='".$tupla["cod"]."'>".$tupla["nombre"]."</option>";
-                }
-                ?>
-                </select>
-            </p>
-            <p>
-                <button type="submit">Volver</button> <button type="submit" name="btnContNuevo">Continuar</button></p>
-            </p>
-        </form>
-    <?php
-    }
-
-    //Esto se "dibuja siempre"
-    echo "<table class='centrado txt_centrado'>";
-    echo "<tr><th>COD</th><th>Nombre</th><th>PVP (€)</th><th><form action='index.php' method='post'><button class='enlace' name='btnNuevo' type='submit'>Producto+</button></form></th></tr>";
-    foreach($json_productos["productos"] as $tupla)
-    {
-        echo "<tr>";
-        echo "<td><form action='index.php' method='post'><button class='enlace' name='btnDetalles' value='".$tupla["cod"]."' type='submit'>".$tupla["cod"]."</button></form></td>";
-        echo "<td>".$tupla["nombre_corto"]."</td>";
-        echo "<td>".$tupla["PVP"]."</td>";
-        echo "<td><form action='index.php' method='post'><button class='enlace' name='btnBorrar' value='".$tupla["cod"]."' type='submit'>Borrar</button> - <button class='enlace' name='btnEditar' value='".$tupla["cod"]."' type='submit'>Editar</button></form></td>";
-        echo "</tr>";
-    }
-    echo "</table>"
     ?>
 </body>
+
 </html>
