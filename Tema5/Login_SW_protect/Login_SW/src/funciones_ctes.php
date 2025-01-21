@@ -1,12 +1,27 @@
 <?php
 define("INACTIVIDAD",5);
-define("DIR_SERV","http://localhost/Proyectos/PHP/Tema5/Login_SW/Actividad3/API_login");
+define("DIR_SERV","http://localhost/Proyectos/PHP/Tema5/Actividad5/servicios_rest_protegidos");
+
  function consumir_servicios_REST_Login($url,$metodo,$datos=null)
  {
      $llamada=curl_init();
      curl_setopt($llamada,CURLOPT_URL,$url);
      curl_setopt($llamada,CURLOPT_RETURNTRANSFER,true);
      curl_setopt($llamada,CURLOPT_CUSTOMREQUEST,$metodo);
+     if(isset($datos))
+         curl_setopt($llamada,CURLOPT_POSTFIELDS,http_build_query($datos));
+     $respuesta=curl_exec($llamada);
+     curl_close($llamada);
+     return $respuesta;
+ }
+
+ function consumir_servicios_REST_Login_protec($url,$metodo,$header,$datos=null)
+ {
+     $llamada=curl_init();
+     curl_setopt($llamada,CURLOPT_URL,$url);
+     curl_setopt($llamada,CURLOPT_RETURNTRANSFER,true);
+     curl_setopt($llamada,CURLOPT_CUSTOMREQUEST,$metodo);
+     curl_setopt($llamada,CURLOPT_HTTPHEADER,$header);
      if(isset($datos))
          curl_setopt($llamada,CURLOPT_POSTFIELDS,http_build_query($datos));
      $respuesta=curl_exec($llamada);

@@ -9,7 +9,22 @@ define("CLAVE_BD","josefa");
 define("NOMBRE_BD","bd_tienda");
 define("PASSWORD_API","PASSWORD_DE_MI_APP");
 
+function validateToken(){
+    $header=apache_request_headers();
+    if (!isset($header["Authorization"])){
+        return false;
+    }else{
+        $authorization=$header["Authorization"];
+        $authorizationArray=explode(" ",$authorization);
+        $token=$authorizationArray[1];
+        try{
+            $info=JWT::decode($token,new Key(PASSWORD_API,('HS256')));
 
+        }catch(Exception $e){
+            return false;
+        }
+    }
+}
 
 function login($usuario,$clave)
 {
