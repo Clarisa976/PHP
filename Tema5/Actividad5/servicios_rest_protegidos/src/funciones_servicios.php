@@ -54,7 +54,7 @@ function login($usuario,$clave)
     if($sentencia->rowCount()>0){
         $respuesta["usuario"]=$sentencia->fetch(PDO::FETCH_ASSOC);
 
-        $payload=["exp"=>strtotime("now")+3600,"data"=>$respuesta["usuario"]["id_usuario"]];
+        $payload=["exp"=>time()+3600,"data"=>$respuesta["usuario"]["id_usuario"]];
         $jwt=JWT::encode($payload,PASSWORD_API,"HS265");
         $respuesta["token"]=$jwt;
 
