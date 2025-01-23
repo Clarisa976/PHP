@@ -436,7 +436,7 @@ if(isset($json_productos["mensaje_baneo"]))
     if(isset($_SESSION["mensaje"]))
     {
         echo "<p class='centrado txt_centrado mensaje'>".$_SESSION["mensaje"]."</p>";
-        session_destroy();
+        unset($_SESSION["mensaje"]);
     }
 
 

@@ -104,7 +104,7 @@ function login($usario,$clave)
     }
         
     else
-        $respuesta["mensaje_baneo"]="El usuario no se encuentra registrado en la BD";
+        $respuesta["mensaje"]="El usuario no se encuentra registrado en la BD";
 
 
     $sentencia=null;

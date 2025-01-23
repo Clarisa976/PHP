@@ -44,14 +44,14 @@ if(isset($_POST["btnLogin"]))
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Actividad 6</title>
+    <title>Login con SW</title>
     <style>
         .error{color:red}
         .mensaje{color:blue;font-size:1.25rem}
     </style>
 </head>
 <body>
-    <h1>Actividad 6</h1>
+    <h1>Login con SW</h1>
     <form action="index.php" method="post">
         <p>
             <label for="usuario">Usuario: </label>
@@ -82,7 +82,7 @@ if(isset($_POST["btnLogin"]))
     if(isset($_SESSION["mensaje_seguridad"]))
     {
         echo "<p class='mensaje'>".$_SESSION["mensaje_seguridad"]."</p>";
-        session_destroy();
+        unset($_SESSION["mensaje_seguridad"]);
     }
     ?>
 </body>
