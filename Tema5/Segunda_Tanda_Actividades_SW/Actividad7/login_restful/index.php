@@ -7,7 +7,6 @@ require "src/funciones_CTES_servicios.php";
 
 $app= new \Slim\App;
 
-
 $app->get('/logueado',function(){
     $test=validateToken();
     if(is_array($test))
@@ -137,10 +136,25 @@ $app->delete('/producto/borrar/{codigo}',function($request){
             echo json_encode($test);
     else
         echo json_encode(array("no_auth"=>"No tienes permisos para usar este servicio"));
-
-
-
     
+});
+
+$app->get('/repetido/{tabla}/{columna}/{valor}',function($request){
+
+    $tabla=$request->getAttribute("tabla");
+    $columna=$request->getAttribute("columna");
+    $valor=$request->getAttribute("valor");
+    echo json_encode(repetido_insertando($tabla, $columna,$valor));
+});
+
+$app->get('/repetido/{tabla}/{columna}/{valor}/{columna_id}/{valor_id}',function($request){
+
+    $tabla=$request->getAttribute("tabla");
+    $columna=$request->getAttribute("columna");
+    $valor=$request->getAttribute("valor");
+    $columna_id=$request->getAttribute("columna_id");
+    $valor_id=$request->getAttribute("valor_id");
+    echo json_encode(repetido_editando($tabla, $columna,$valor,$columna_id, $valor_id));
 });
 
 
