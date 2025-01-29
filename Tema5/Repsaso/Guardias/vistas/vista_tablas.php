@@ -22,7 +22,7 @@ if(isset($_POST['btnEquipo'])||isset(($_POST['btnProfe']))){
         die(error_page("Examen3_PHP_24-25","<h1>Examen Guardias</h1><p>Sin respuesta oportuna de la API deGuardia</p>"));
     }
 
-    $guardia=$json['deGuardia'];
+    $guardia=$json['de_guardia'];
     $respuesta=consumir_servicios_REST(DIR_SERV."/usuariosGuardia/".$_POST['dia']."/".$_POST['hora']."","GET",$datos_env);
     $json2=json_decode($respuesta,true);
     if(!$json2){
