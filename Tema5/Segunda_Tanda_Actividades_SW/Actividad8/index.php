@@ -1,5 +1,5 @@
 <?php
-session_name("Actividad8");
+session_name("Examen3_24_25");
 session_start();
 require "src/funciones_ctes.php";
 

@@ -7,7 +7,7 @@ $respuesta = consumir_servicios_REST_Login_protec($url, "GET", $header);
 $json_login = json_decode($respuesta, true);
 if (!$json_login) {
     session_destroy();
-    die(error_page("Login con SW", "<p>Error consumiendo el Servicio Web: <strong>" . $url . "</strong></p>"));
+    die(error_page("Examen3_24_25", "<p>Error consumiendo el Servicio Web: <strong>" . $url . "</strong></p>"));
 }
 
 if (isset($json_login["no_auth"])) {
@@ -19,7 +19,7 @@ if (isset($json_login["no_auth"])) {
 
 if (isset($json_login["error"])) {
     session_destroy();
-    die(error_page("Login con SW", "<p>" . $json_login["error"] . "</p>"));
+    die(error_page("Examen3_24_25", "<p>" . $json_login["error"] . "</p>"));
 }
 
 

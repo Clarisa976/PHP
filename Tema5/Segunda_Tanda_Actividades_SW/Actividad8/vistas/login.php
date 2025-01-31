@@ -23,13 +23,14 @@
                 session_destroy();
                 die(error_page("Actividad_8", "<p> Error: ".$json_login["error"]." </p>"));
             }
-            if(isset($json_login["usuario"])){
+            if(isset($json_respuesta["mensaje"])){
+                $error_usuario=true;
+            }
+            else{
                 $_SESSION["ultm_accion"]=time();
                 $_SESSION["token"]=$json_login["token"];
                 header("Location:index.php");
                 exit;
-            }else{
-                $error_usuario=true;
             }
         }
     }
