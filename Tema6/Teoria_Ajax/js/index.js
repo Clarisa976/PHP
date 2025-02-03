@@ -125,8 +125,22 @@ function error_ajax_jquery(jqXHR, textStatus) {
     }
     else if (jqXHR.status === 500) {
         respuesta = 'Requested page not found [500]';
-    }
-    else if (textStatus === 'parseerror') {
+    } else if (textStatus === 'parsererror') {
+
         respuesta = 'Requested JSON parse failed.';
+
+    } else if (textStatus === 'timeout') {
+
+        respuesta = 'Time out error.';
+
+    } else if (textStatus === 'abort') {
+
+        respuesta = 'Ajax request aborted.';
+
+    } else {
+
+        respuesta = 'Uncaught Error: ' + jqXHR.responseText;
+
     }
+    return respuesta;
 }
