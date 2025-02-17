@@ -8,7 +8,7 @@ require 'Firebase/autoload.php';
 define("SERVIDOR_BD","localhost");
 define("USUARIO_BD","jose");
 define("CLAVE_BD","josefa");
-define("NOMBRE_BD","bd_tienda");
+define("NOMBRE_BD", "bd_libreria_exam");
 define("PASSWORD_API","PASSWORD_DE_MI_APLICACION");
 
 
@@ -82,7 +82,7 @@ function login($usario,$clave)
     }
 
     try{
-        $consulta="select * from usuarios where usuario=? and clave=?";
+        $consulta="select * from usuarios where lector=? and clave=?";
         $sentencia=$conexion->prepare($consulta);
         $sentencia->execute([$usario,$clave]);
     }
@@ -113,7 +113,7 @@ function login($usario,$clave)
 }
 
 
-function obtener_productos()
+function obtener_libros()
 {
     try{
         $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
@@ -125,7 +125,7 @@ function obtener_productos()
     }
 
     try{
-        $consulta="select * from producto";
+        $consulta="select * from libros";
         $sentencia=$conexion->prepare($consulta);
         $sentencia->execute();
 
@@ -138,13 +138,13 @@ function obtener_productos()
         return $respuesta;
     }
 
-    $respuesta["productos"]=$sentencia->fetchAll(PDO::FETCH_ASSOC);
+    $respuesta["libros"]=$sentencia->fetchAll(PDO::FETCH_ASSOC);
     $sentencia=null;
     $conexion=null;
     return $respuesta;
 }
 
-function obtener_producto($cod)
+function crear_libro($referencia, $titulo, $autor, $descripcion, $precio)
 {
     try{
         $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
@@ -155,9 +155,9 @@ function obtener_producto($cod)
         return $respuesta;
     }
     try{
-        $consulta="select producto.*, familia.nombre as nombre_familia from producto, familia where producto.familia=familia.cod and producto.cod=?";
-        $sentencia=$conexion->prepare($consulta);
-        $sentencia->execute([$cod]);
+        $consulta = "INSERT INTO libros (referencia, titulo, autor, descripcion, precio) VALUES (?,?,?,?,?)";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute([$referencia, $titulo, $autor, $descripcion, $precio]);
 
     }
     catch(PDOException $e)
@@ -167,18 +167,14 @@ function obtener_producto($cod)
         $respuesta["error"]="No he podido realizarse la consulta: ".$e->getMessage();
         return $respuesta;
     }
-    if($sentencia->rowCount()<=0)
-        $respuesta["mensaje"]="El producto con cod: ".$cod." no se encuentra en la BD";
-    else
-        $respuesta["producto"]=$sentencia->fetch(PDO::FETCH_ASSOC);
-
+    $respuesta["mensaje"] = "Libro insertado correctamente en la BD";
     $sentencia=null;
     $conexion=null;
     return $respuesta;
 }
 
 
-function insertar_producto($datos)
+function actualizar_libro($referencia, $titulo, $autor, $descripcion, $precio)
 {
     try{
         $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
@@ -189,41 +185,9 @@ function insertar_producto($datos)
         return $respuesta;
     }
     try{
-        $consulta="insert into producto (cod, nombre, nombre_corto,descripcion,PVP, familia) values (?,?,?,?,?,?)";
+        $consulta = "UPDATE libros SET titulo = ?, autor = ?, descripcion = ?, precio = ? WHERE referencia = ?";
         $sentencia=$conexion->prepare($consulta);
-        $sentencia->execute($datos);
-
-    }
-    catch(PDOException $e)
-    {
-        $sentencia=null;
-        $conexion=null;
-        $respuesta["error"]="No he podido realizarse la consulta: ".$e->getMessage();
-        return $respuesta;
-    }
-   
-    $respuesta["mensaje"]="El producto con cod: ".$datos[0]." se ha insertado correctamente";
-   
-
-    $sentencia=null;
-    $conexion=null;
-    return $respuesta;
-}
-
-function actualizar_producto($datos)
-{
-    try{
-        $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
-    }
-    catch(PDOException $e)
-    {
-        $respuesta["error"]="No he podido conectarse a la base de batos: ".$e->getMessage();
-        return $respuesta;
-    }
-    try{
-        $consulta="update producto set nombre=?, nombre_corto=?, descripcion=?, PVP=?, familia=? where cod=?";
-        $sentencia=$conexion->prepare($consulta);
-        $sentencia->execute($datos);
+        $sentencia->execute([$titulo, $autor, $descripcion, $precio, $referencia]);
 
     }
     catch(PDOException $e)
@@ -234,16 +198,13 @@ function actualizar_producto($datos)
         return $respuesta;
     }
    
-    $respuesta["mensaje"]="El producto con cod: ".end($datos)." se ha actualizado correctamente";
-   
-
-    $sentencia=null;
-    $conexion=null;
+    $respuesta["mensaje"] = "Libro actualizado correctamente en la BD";
+    $sentencia = null;
+    $conexion = null;
     return $respuesta;
 }
 
-
-function borrar_producto($cod)
+function borrar_libro($referencia)
 {
     try{
         $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
@@ -254,9 +215,40 @@ function borrar_producto($cod)
         return $respuesta;
     }
     try{
-        $consulta="delete from producto where cod=?";
-        $sentencia=$conexion->prepare($consulta);
-        $sentencia->execute([$cod]);
+        $consulta = "DELETE FROM libros WHERE referencia = ?";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute([$referencia]);
+
+    }
+    catch(PDOException $e)
+    {
+        $sentencia=null;
+        $conexion=null;
+        $respuesta["error"]="No he podido realizarse la consulta: ".$e->getMessage();
+        return $respuesta;
+    }
+   
+    $respuesta["mensaje"] = "Libro borrado correctamente en la BD";
+    $sentencia=null;
+    $conexion=null;
+    return $respuesta;
+}
+
+
+function actualizar_portada($referencia, $portada)
+{
+    try{
+        $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    }
+    catch(PDOException $e)
+    {
+        $respuesta["error"]="No he podido conectarse a la base de batos: ".$e->getMessage();
+        return $respuesta;
+    }
+    try{
+        $consulta = "UPDATE libros SET portada = ? WHERE referencia = ?";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute([$portada, $referencia]);
 
     }
     catch(PDOException $e)
@@ -267,14 +259,13 @@ function borrar_producto($cod)
         return $respuesta;
     }
     
-    $respuesta["mensaje"]="El producto con cod: ".$cod." se ha borrado de la BD";
-   
-    $sentencia=null;
-    $conexion=null;
+    $respuesta["mensaje"] = "Portada cambiada correctamente en la BD";
+    $sentencia = null;
+    $conexion = null;
     return $respuesta;
 }
 
-function obtener_familias()
+function obtener_libro($referencia)
 {
     try{
         $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
@@ -286,9 +277,10 @@ function obtener_familias()
     }
 
     try{
-        $consulta="select * from familia";
-        $sentencia=$conexion->prepare($consulta);
-        $sentencia->execute();
+        $consulta = "SELECT * FROM libros WHERE referencia = ?";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute([$referencia]);
+        $resultado = $sentencia->fetch(PDO::FETCH_ASSOC);
 
     }
     catch(PDOException $e)
@@ -299,75 +291,67 @@ function obtener_familias()
         return $respuesta;
     }
 
-    $respuesta["familias"]=$sentencia->fetchAll(PDO::FETCH_ASSOC);
-    $sentencia=null;
-    $conexion=null;
+    if($resultado) {
+        $respuesta["libro"] = $resultado;
+    } else {
+        $respuesta["mensaje"] = "Libro no encontrado";
+    }
+    $sentencia = null;
+    $conexion = null;
     return $respuesta;
 }
-
-function repetido_insertando($tabla,$columna,$valor)
+function repetido_insertando($tabla, $columna, $valor)
 {
-    try{
-        $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
-    }
-    catch(PDOException $e)
-    {
-        $respuesta["error"]="No he podido conectarse a la base de batos: ".$e->getMessage();
+    try {
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    } catch(PDOException $e) {
+        $respuesta["error"] = "No he podido conectarse a la base de datos: " . $e->getMessage();
         return $respuesta;
     }
 
-    try{
-        $consulta="select ".$columna." from ".$tabla." where ".$columna."=?" ;
-        $sentencia=$conexion->prepare($consulta);
+    try {
+        $consulta = "SELECT " . $columna . " FROM " . $tabla . " WHERE " . $columna . " = ?";
+        $sentencia = $conexion->prepare($consulta);
         $sentencia->execute([$valor]);
-
-    }
-    catch(PDOException $e)
-    {
-        $sentencia=null;
-        $conexion=null;
-        $respuesta["error"]="No he podido realizarse la consulta: ".$e->getMessage();
+    } catch(PDOException $e) {
+        $sentencia = null;
+        $conexion = null;
+        $respuesta["error"] = "No he podido realizarse la consulta: " . $e->getMessage();
         return $respuesta;
     }
 
-    $respuesta["repetido"]=$sentencia->rowCount()>0;
-        
-    
-    $sentencia=null;
-    $conexion=null;
+    $respuesta["repetido"] = $sentencia->rowCount() > 0;
+
+    $sentencia = null;
+    $conexion = null;
     return $respuesta;
 }
 
-function repetido_editando($tabla,$columna,$valor,$columna_id,$valor_id)
+function repetido_editando($tabla, $columna, $valor, $columna_id, $valor_id)
 {
-    try{
-        $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
-    }
-    catch(PDOException $e)
-    {
-        $respuesta["error"]="No he podido conectarse a la base de batos: ".$e->getMessage();
+    try {
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    } catch(PDOException $e) {
+        $respuesta["error"] = "No he podido conectarse a la base de datos: " . $e->getMessage();
         return $respuesta;
     }
 
-    try{
-        $consulta="select ".$columna." from ".$tabla." where ".$columna."=? and ".$columna_id."<>?" ;
-        $sentencia=$conexion->prepare($consulta);
-        $sentencia->execute([$valor,$valor_id]);
-
-    }
-    catch(PDOException $e)
-    {
-        $sentencia=null;
-        $conexion=null;
-        $respuesta["error"]="No he podido realizarse la consulta: ".$e->getMessage();
+    try {
+        $consulta = "SELECT " . $columna . " FROM " . $tabla . " WHERE " . $columna . " = ? AND " . $columna_id . " <> ?";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute([$valor, $valor_id]);
+    } catch(PDOException $e) {
+        $sentencia = null;
+        $conexion = null;
+        $respuesta["error"] = "No he podido realizarse la consulta: " . $e->getMessage();
         return $respuesta;
     }
 
-    $respuesta["repetido"]=$sentencia->rowCount()>0;
-        
-    
-    $sentencia=null;
-    $conexion=null;
+    $respuesta["repetido"] = $sentencia->rowCount() > 0;
+
+    $sentencia = null;
+    $conexion = null;
     return $respuesta;
 }
+
 ?>
