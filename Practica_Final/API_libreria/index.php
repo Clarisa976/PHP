@@ -5,13 +5,15 @@ require "src/funciones_CTES_servicios.php";
 $app = new \Slim\App();
 
 // a) Servicio de login: POST /login  
-$app->post('/login', function ($request, $response, $args) {
-    // Se esperan los datos en un array asociativo con índices "lector" y "clave" (esta última ya en MD5)
-    $lector = $request->getParam("lector");
-    $clave = $request->getParam("clave");
-    $resultado = login($lector, $clave);
-    echo json_encode($resultado);
+$app->post('/login', function ($request) {
+
+    $datos_login[] = $request->getParam("lector");
+    $datos_login[] = $request->getParam("clave");
+
+
+    echo json_encode(login($datos_login));
 });
+
 
 // b) Obtener datos del usuario logueado: GET /logueado  
 $app->get('/logueado', function ($request, $response, $args) {
@@ -24,14 +26,8 @@ $app->get('/logueado', function ($request, $response, $args) {
 });
 
 // c) Obtener todos los libros: GET /obtenerLibros  
-$app->get('/obtenerLibros', function ($request, $response, $args) {
-    $test = validateToken();
-    if (is_array($test) && isset($test["usuario"])) {
-        $resultado = obtener_libros();
-        echo json_encode($resultado);
-    } else {
-        echo json_encode(array("no_auth" => "No tienes permisos para usar este servicio"));
-    }
+$app->get('/obtenerLibros', function () {
+    echo json_encode(obtener_libros()); 
 });
 
 // d) Crear un nuevo libro: POST /crearLibro  
