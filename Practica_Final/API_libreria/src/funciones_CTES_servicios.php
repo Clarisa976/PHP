@@ -128,7 +128,7 @@ function obtener_libros()
     return $respuesta;
 }
 
-function crear_libro($referencia, $titulo, $autor, $descripcion, $precio)
+/*function crear_libro($referencia, $titulo, $autor, $descripcion, $precio)
 {
     try{
         $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
@@ -154,6 +154,70 @@ function crear_libro($referencia, $titulo, $autor, $descripcion, $precio)
     $respuesta["mensaje"] = "Libro insertado correctamente en la BD";
     $sentencia=null;
     $conexion=null;
+    return $respuesta;
+}*/
+
+function crear_libro($referencia, $titulo, $autor, $descripcion, $precio)
+{
+    $respuesta = array();
+
+    // Paso 1: Conexión a la BD
+    try {
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD,
+            USUARIO_BD, CLAVE_BD,
+            array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")
+        );
+    } catch (PDOException $e) {
+        $respuesta["error"] = "Imposible conectar: " . $e->getMessage();
+        return $respuesta;
+    }
+
+    // Paso 2: Comprobar si se subió un fichero o no
+    $portada = "no_imagen.jpg"; // Valor por defecto
+
+    if (
+        isset($_FILES["portada"]) &&
+        $_FILES["portada"]["error"] === 0 &&
+        $_FILES["portada"]["name"] !== ""
+    ) {
+        // 2A) Obtener extensión
+        $extension = pathinfo($_FILES["portada"]["name"], PATHINFO_EXTENSION);
+        // 2B) Construir el nuevo nombre: img_{referencia}.{extension}
+        $nuevo_nombre = "img_" . $referencia . "." . $extension;
+        
+        // 2C) Mover el fichero a la carpeta "images/"
+        // Asegúrate de que "images/" existe y tiene permisos de escritura
+        $ruta_destino = __DIR__ . "/../../images/" . $nuevo_nombre; 
+        // __DIR__ apunta a la carpeta actual. Ajusta la ruta según tu estructura.
+        
+        if (move_uploaded_file($_FILES["portada"]["tmp_name"], $ruta_destino)) {
+            // Si se movió bien, actualizamos la variable portada
+            //$respuesta["mensaje"] = "Libro creado y portada subida correctamente";
+            $portada = $nuevo_nombre;
+        } else {
+            // Si falla el move_uploaded_file, puedes poner un mensaje de aviso 
+            // o dejar portada como no_imagen.jpg
+            $respuesta["error"] = "No se pudo mover el fichero, se usará no_imagen.jpg";
+        }
+    }
+
+    // Paso 3: INSERT en la BD (incluyendo el campo portada)
+    try {
+        $consulta = "INSERT INTO libros (referencia, titulo, autor, descripcion, precio, portada) 
+                     VALUES (?, ?, ?, ?, ?, ?)";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute([$referencia, $titulo, $autor, $descripcion, $precio, $portada]);
+
+        $respuesta["mensaje"] = "Libro insertado correctamente en la BD";
+    } catch (PDOException $e) {
+        $respuesta["error"] = "Imposible realizar la consulta: " . $e->getMessage();
+        $sentencia = null;
+        $conexion = null;
+        return $respuesta;
+    }
+
+    $sentencia = null;
+    $conexion = null;
     return $respuesta;
 }
 

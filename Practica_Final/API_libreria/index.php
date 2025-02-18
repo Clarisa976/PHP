@@ -31,7 +31,7 @@ $app->get('/obtenerLibros', function () {
 });
 
 // d) Crear un nuevo libro: POST /crearLibro  
-$app->post('/crearLibro', function ($request, $response, $args) {
+$app->post('/crearLibro', function ($request,) {
     $test = validateToken();
     if (is_array($test) && isset($test["usuario"])) {
         $referencia  = $request->getParam("referencia");
