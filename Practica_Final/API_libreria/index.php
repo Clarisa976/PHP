@@ -46,6 +46,40 @@ $app->post('/crearLibro', function ($request,) {
         echo json_encode(array("no_auth" => "No tienes permisos para usar este servicio"));
     }
 });
+// d2) Cargar portada de un libro: POST /cargarPortada
+$app->post('/cargarPortada', function ($request, $response, $args) {
+    $test = validateToken();
+    if (!(is_array($test) && isset($test["usuario"]))) {
+        return $response->withJson(["no_auth" => "No tienes permisos para usar este servicio"]);
+    }
+
+    $params = $request->getParsedBody();
+    $referencia = isset($params['referencia']) ? $params['referencia'] : null;
+    if (!$referencia) {
+        return $response->withJson(["error" => "No se especificó la referencia del libro."], 400);
+    }
+
+    $uploadedFiles = $request->getUploadedFiles();
+    if (!isset($uploadedFiles['portada'])) {
+        return $response->withJson(["error" => "No se envió archivo de portada."], 400);
+    }
+    $portada = $uploadedFiles['portada'];
+    if ($portada->getError() !== UPLOAD_ERR_OK) {
+        return $response->withJson(["error" => "Error en la subida del archivo."], 400);
+    }
+
+    $extension = pathinfo($portada->getClientFilename(), PATHINFO_EXTENSION);
+    $nuevo_nombre = "img_" . $referencia . "." . $extension;
+    $ruta_destino = __DIR__ . "/../../images/" . $nuevo_nombre; 
+
+    try {
+        $portada->moveTo($ruta_destino);
+    } catch (Exception $e) {
+        return $response->withJson(["error" => "No se pudo mover el archivo: " . $e->getMessage()], 500);
+    }
+
+    return $response->withJson(["imagen" => $nuevo_nombre, "mensaje" => "Imagen subida correctamente."]);
+});
 
 // e) Actualizar un libro: PUT /actualizarLibro/{referencia}  
 $app->put('/actualizarLibro/{referencia}', function ($request, $response, $args) {
