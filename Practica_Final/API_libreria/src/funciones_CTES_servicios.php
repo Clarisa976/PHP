@@ -191,7 +191,7 @@ function crear_libro($referencia, $titulo, $autor, $descripcion, $precio)
 
             $portada = $nuevo_nombre;
         } else {
-
+            // Si falla el move_uploaded_file, puedes poner un mensaje de aviso o dejar portada como no_imagen.jpg
             $respuesta["error"] = "No se pudo mover el fichero, se usará no_imagen.jpg";
         }
     }

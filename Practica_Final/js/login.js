@@ -72,7 +72,7 @@ function cerrar_sesion() {
 }
 
 function cargar_vista_login(error) {
-
+    $('#errores').html("");
     let html_form_login = "<div id='login'>";
     html_form_login += "<form onsubmit='event.preventDefault();hacer_login();'>";
     html_form_login += "<p><label for='usuario'>Usuario: </label><input type='text' id='usuario' required/><span id='error_login' class='error'></span></p>";
