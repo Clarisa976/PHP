@@ -31,54 +31,80 @@ $app->get('/obtenerLibros', function () {
 });
 
 // d) Crear un nuevo libro: POST /crearLibro  
-$app->post('/crearLibro', function ($request,) {
+$app->post('/crearLibro', function ($request) {
     $test = validateToken();
-    if (is_array($test) && isset($test["usuario"])) {
-        $referencia  = $request->getParam("referencia");
-        $titulo      = $request->getParam("titulo");
-        $autor       = $request->getParam("autor");
-        $descripcion = $request->getParam("descripcion");
-        $precio      = $request->getParam("precio");
+    if (is_array($test)) {
+        if (isset($test["usuario"])) {
+            if ($test["usuario"]["tipo"] == "admin") {
+                $referencia  = $request->getParam("referencia");
+                $titulo      = $request->getParam("titulo");
+                $autor       = $request->getParam("autor");
+                $descripcion = $request->getParam("descripcion");
+                $precio      = $request->getParam("precio");
 
-        $resultado   = crear_libro($referencia, $titulo, $autor, $descripcion, $precio);
-        echo json_encode($resultado);
+                $resultado = crear_libro($referencia, $titulo, $autor, $descripcion, $precio);
+                echo json_encode($resultado);
+            } else {
+                echo json_encode(array("no_auth" => "No tienes permiso para usar el servicio"));
+            }
+        } else {
+            echo json_encode($test);
+        }
     } else {
-        echo json_encode(array("no_auth" => "No tienes permisos para usar este servicio"));
+        echo json_encode(array("no_auth" => "No tienes permiso para usar el servicio"));
     }
 });
+
 // d2) Cargar portada de un libro: POST /cargarPortada
-$app->post('/cargarPortada', function ($request, $response, $args) {
+$app->post('/cargarPortada', function ($request) {
     $test = validateToken();
-    if (!(is_array($test) && isset($test["usuario"]))) {
-        return $response->withJson(["no_auth" => "No tienes permisos para usar este servicio"]);
+    if (is_array($test)) {
+        if (isset($test["usuario"]) && $test["usuario"]["tipo"] == "admin") {
+            $params = $request->getParsedBody();
+            $referencia = isset($params['referencia']) ? $params['referencia'] : null;
+            if (!$referencia) {
+                echo json_encode(array("error" => "No se especificó la referencia del libro."));
+                return;
+            }
+            
+            // Comprobamos si está repe
+            $resultadoRepetido = repetido_insertando("libros", "referencia", $referencia);
+            if (isset($resultadoRepetido["repetido"]) && $resultadoRepetido["repetido"]) {
+                echo json_encode(array("error" => "La referencia ya existe, no se sube la imagen."));
+                return;
+            }
+            
+            // Si no está repe miramos ssi hay portada y si no hay errores
+            $uploadedFiles = $request->getUploadedFiles();
+            if (!isset($uploadedFiles['portada'])) {
+                echo json_encode(array("error" => "No se envió archivo de portada."));
+                return;
+            }
+            $portada = $uploadedFiles['portada'];
+            if ($portada->getError() !== UPLOAD_ERR_OK) {
+                echo json_encode(array("error" => "Error en la subida del archivo."));
+                return;
+            }
+            
+            // Lo movemos
+            $extension = pathinfo($portada->getClientFilename(), PATHINFO_EXTENSION);
+            $nuevo_nombre = "img_" . $referencia . "." . $extension;
+            $ruta_destino = __DIR__ . "/../images/" . $nuevo_nombre;
+            
+            try {
+                $portada->moveTo($ruta_destino);
+            } catch (Exception $e) {
+                echo json_encode(array("error" => "No se pudo mover el archivo: " . $e->getMessage()));
+                return;
+            }
+            
+            echo json_encode(array("imagen" => $nuevo_nombre, "mensaje" => "Imagen subida correctamente."));
+        } else {
+            echo json_encode(array("no_auth" => "No tienes permiso para usar el servicio"));
+        }
+    } else {
+        echo json_encode(array("no_auth" => "No tienes permiso para usar el servicio"));
     }
-
-    $params = $request->getParsedBody();
-    $referencia = isset($params['referencia']) ? $params['referencia'] : null;
-    if (!$referencia) {
-        return $response->withJson(["error" => "No se especificó la referencia del libro."], 400);
-    }
-
-    $uploadedFiles = $request->getUploadedFiles();
-    if (!isset($uploadedFiles['portada'])) {
-        return $response->withJson(["error" => "No se envió archivo de portada."], 400);
-    }
-    $portada = $uploadedFiles['portada'];
-    if ($portada->getError() !== UPLOAD_ERR_OK) {
-        return $response->withJson(["error" => "Error en la subida del archivo."], 400);
-    }
-
-    $extension = pathinfo($portada->getClientFilename(), PATHINFO_EXTENSION);
-    $nuevo_nombre = "img_" . $referencia . "." . $extension;
-    $ruta_destino = __DIR__ . "/../../images/" . $nuevo_nombre; 
-
-    try {
-        $portada->moveTo($ruta_destino);
-    } catch (Exception $e) {
-        return $response->withJson(["error" => "No se pudo mover el archivo: " . $e->getMessage()], 500);
-    }
-
-    return $response->withJson(["imagen" => $nuevo_nombre, "mensaje" => "Imagen subida correctamente."]);
 });
 
 // e) Actualizar un libro: PUT /actualizarLibro/{referencia}  
@@ -102,13 +128,19 @@ $app->put('/actualizarLibro/{referencia}', function ($request, $response, $args)
 $app->delete('/borrarLibro/{referencia}', function ($request, $response, $args) {
     $test = validateToken();
     if (is_array($test) && isset($test["usuario"])) {
-        $referencia  = $args['referencia'];
-        $resultado   = borrar_libro($referencia);
-        echo json_encode($resultado);
+        if ($test["usuario"]["tipo"] == "admin") {
+            $referencia = $args['referencia'];
+            $resultado = borrar_libro($referencia);
+            echo json_encode($resultado);
+        } else {
+            echo json_encode(array("no_auth" => "No tienes permiso para usar el servicio"));
+        }
     } else {
         echo json_encode(array("no_auth" => "No tienes permisos para usar este servicio"));
     }
 });
+
+
 
 // g) Actualizar la portada de un libro: PUT /actualizarPortada/{referencia}  
 $app->put('/actualizarPortada/{referencia}', function ($request, $response, $args) {
