@@ -159,10 +159,14 @@ function obtener_libros()
 
 function crear_libro($referencia, $titulo, $autor, $descripcion, $precio)
 {
-    // Conexión
+    $respuesta = array();
+
+    // Conexión a la BD
     try {
-        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD,
-            USUARIO_BD, CLAVE_BD,
+        $conexion = new PDO(
+            "mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD,
+            USUARIO_BD,
+            CLAVE_BD,
             array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")
         );
     } catch (PDOException $e) {
@@ -170,13 +174,12 @@ function crear_libro($referencia, $titulo, $autor, $descripcion, $precio)
         return $respuesta;
     }
 
-    // Buscamos si ya está esa referencia
+    // Verificar duplicados (asumiendo que ya se verificó antes o se puede repetir aquí)
     try {
         $consulta = "SELECT referencia FROM libros WHERE referencia = ?";
         $sentencia = $conexion->prepare($consulta);
         $sentencia->execute(array($referencia));
         if ($sentencia->rowCount() > 0) {
-            // Si está da error
             $respuesta["error"] = "La referencia ya existe.";
             return $respuesta;
         }
@@ -185,25 +188,31 @@ function crear_libro($referencia, $titulo, $autor, $descripcion, $precio)
         return $respuesta;
     }
 
-    $portada = "no_imagen.jpg";// Por defecto
+    // Valor por defecto
+    $portada = "no_imagen.jpg";
 
-    // Sino es el por defecto
-    if ( isset($_FILES["portada"]) &&
+    // Primero comprobamos si se envió el nombre de la imagen mediante POST (lo que hace /cargarPortada)
+    if (isset($_POST["portada"]) && $_POST["portada"] != "") {
+        $portada = $_POST["portada"];
+    }
+    // Si no, comprobamos si se envió un archivo (subida directa)
+    elseif (
+        isset($_FILES["portada"]) &&
         $_FILES["portada"]["error"] === 0 &&
-        $_FILES["portada"]["name"] !== "") {
+        $_FILES["portada"]["name"] !== ""
+    ) {
         $extension = pathinfo($_FILES["portada"]["name"], PATHINFO_EXTENSION);
         $nuevo_nombre = "img_" . $referencia . "." . $extension;
+        // Asegúrate de usar la misma ruta que en cargarPortada; en este ejemplo usamos ../../images/
         $ruta_destino = __DIR__ . "/../../images/" . $nuevo_nombre;
-
         if (move_uploaded_file($_FILES["portada"]["tmp_name"], $ruta_destino)) {
             $portada = $nuevo_nombre;
         } else {
-            // Si falla el movimiento se deja la de por defecto
             $respuesta["error"] = "No se pudo mover el fichero, se usará no_imagen.jpg";
         }
     }
 
-    // Si todo lo anterior ok se inserta
+    // Insertar el libro en la BD
     try {
         $consulta = "INSERT INTO libros (referencia, titulo, autor, descripcion, precio, portada) 
                      VALUES (?, ?, ?, ?, ?, ?)";
@@ -256,17 +265,20 @@ function actualizar_libro($referencia, $titulo, $autor, $descripcion, $precio)
 //borrar libro con la imagen
 function borrar_libro($referencia)
 {
+    $respuesta = array();
     try {
-        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD,
-            USUARIO_BD, CLAVE_BD,
+        $conexion = new PDO(
+            "mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD,
+            USUARIO_BD,
+            CLAVE_BD,
             array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")
         );
     } catch (PDOException $e) {
-        $respuesta["error"] = "No he podido conectarme a la base de datos: " . $e->getMessage();
+        $respuesta["error"] = "No he podido conectarme a la BD: " . $e->getMessage();
         return $respuesta;
     }
-    
-    // Buscamos el libro y miramos que portada tiene
+
+    // Buscar el libro y obtener la portada
     try {
         $consulta = "SELECT portada FROM libros WHERE referencia = ?";
         $sentencia = $conexion->prepare($consulta);
@@ -277,19 +289,19 @@ function borrar_libro($referencia)
         $respuesta["error"] = "Error al obtener la portada: " . $e->getMessage();
         return $respuesta;
     }
-    
-    // Si la imagen no es la de por defecto se borra
+
+    // Si la imagen no es la por defecto, se borra
     if ($portada != "no_imagen.jpg") {
+        // Usamos la misma ruta que en crear_libro, en este ejemplo __DIR__."/../../images/"
         $ruta_imagen = __DIR__ . "/../../images/" . $portada;
         if (file_exists($ruta_imagen)) {
             if (!unlink($ruta_imagen)) {
-                // Si hubiera error al borrar la imagen sale el mensaje
                 $respuesta["error_img"] = "Error al eliminar la imagen asociada.";
             }
         }
     }
-    
-    // Borrarmos el libro normal
+
+    // Borrar el libro
     try {
         $consulta = "DELETE FROM libros WHERE referencia = ?";
         $sentencia = $conexion->prepare($consulta);
@@ -298,11 +310,10 @@ function borrar_libro($referencia)
         $respuesta["error"] = "No he podido realizar la consulta: " . $e->getMessage();
         return $respuesta;
     }
-    
+
     $respuesta["mensaje"] = "Libro borrado correctamente en la BD";
     return $respuesta;
 }
-
 
 /*function borrar_libro($referencia)
 {
